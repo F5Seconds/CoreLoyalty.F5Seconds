@@ -1,0 +1,25 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/.vscode
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.Application/bin
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.Application/obj
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.Domain/bin
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.Domain/obj
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.Infrastructure.Identity/bin
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.Infrastructure.Identity/obj
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.Infrastructure.Persistence/bin
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.Infrastructure.Persistence/obj
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.Infrastructure.Shared/bin
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.Infrastructure.Shared/obj
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.WebApi/bin
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.WebApi/obj
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.Urbox/bin
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.Urbox/obj
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.GotIt/bin
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.GotIt/obj
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.VietCapital/bin
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.VietCapital/obj
+/CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.VietCapital/ClientApp/node_modules
