@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CoreLoyalty.F5Seconds.Urbox
+namespace CoreLoyalty.F5Seconds.Gateway
 {
     public class Program
     {
@@ -20,13 +20,7 @@ namespace CoreLoyalty.F5Seconds.Urbox
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.ConfigureAppConfiguration((hostingContext, config) => { 
-                        config
-                        .AddJsonFile($"ocelot.{env}.json", optional: false, reloadOnChange: true)
-                        .AddEnvironmentVariables();
-                    });
                 });
     }
 }

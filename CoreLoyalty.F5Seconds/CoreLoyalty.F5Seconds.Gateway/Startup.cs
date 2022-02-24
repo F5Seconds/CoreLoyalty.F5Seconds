@@ -1,27 +1,39 @@
-using CoreLoyalty.F5Seconds.Urbox.Extensions;
+using CoreLoyalty.F5Seconds.Gateway.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace CoreLoyalty.F5Seconds.Urbox
+namespace CoreLoyalty.F5Seconds.Gateway
 {
     public class Startup
     {
         public Startup(IConfiguration configuration)
         {
-            _config = configuration;
+            Configuration = configuration;
         }
 
-        public IConfiguration _config { get; }
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSwaggerExtension();
-            services.AddOcelotExtension(_config);
-            services.AddControllers().AddNewtonsoftJson();
+
+            services.AddControllers();
+            services.AddHttpClientExtension();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CoreLoyalty.F5Seconds.Gateway", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -30,11 +42,8 @@ namespace CoreLoyalty.F5Seconds.Urbox
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseSwaggerForOcelotUI(opt =>
-                //{
-                //    opt.PathToSwaggerGenerator = "/swagger";
-                //});
-                app.UseSwaggerExtension();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CoreLoyalty.F5Seconds.Gateway v1"));
             }
 
             app.UseHttpsRedirection();
@@ -47,7 +56,6 @@ namespace CoreLoyalty.F5Seconds.Urbox
             {
                 endpoints.MapControllers();
             });
-            app.UseOcelotExtension();
         }
     }
 }

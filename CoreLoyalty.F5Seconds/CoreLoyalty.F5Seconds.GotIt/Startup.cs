@@ -1,3 +1,4 @@
+using CoreLoyalty.F5Seconds.GotIt.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -18,20 +19,18 @@ namespace CoreLoyalty.F5Seconds.GotIt
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _config = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration _config { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CoreLoyalty.F5Seconds.GotIt", Version = "v1" });
-            });
+            services.AddSwaggerExtension();
+            services.AddOcelotExtension(_config);
+            services.AddControllers().AddNewtonsoftJson();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,8 +39,7 @@ namespace CoreLoyalty.F5Seconds.GotIt
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CoreLoyalty.F5Seconds.GotIt v1"));
+                app.UseSwaggerExtension();
             }
 
             app.UseHttpsRedirection();
@@ -54,6 +52,7 @@ namespace CoreLoyalty.F5Seconds.GotIt
             {
                 endpoints.MapControllers();
             });
+            app.UseOcelotExtension();
         }
     }
 }
