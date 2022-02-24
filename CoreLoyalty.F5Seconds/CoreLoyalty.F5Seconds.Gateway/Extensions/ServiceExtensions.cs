@@ -10,7 +10,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Extensions
             services.AddHttpClient<IGotItClient,GotItClient>(c => { 
                 c.BaseAddress = new System.Uri("https://localhost:5001"); 
             });
-            services.AddHttpClient<UrboxClient,UrboxClient>(c => { 
+            services.AddHttpClient<IUrboxClient,UrboxClient>(c => { 
                 c.BaseAddress = new System.Uri("https://localhost:5004"); 
             });
         }

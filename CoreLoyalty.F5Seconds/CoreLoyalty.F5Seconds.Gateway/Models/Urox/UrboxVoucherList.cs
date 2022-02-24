@@ -2,21 +2,23 @@
 
 namespace CoreLoyalty.F5Seconds.Gateway.Models.Urox
 {
-    public class UrboxVoucherList
+    public class UrboxVoucherList: UrboxMessageBas
     {
+        public DataVoucher data { get; set; }
     }
 
     public class DataVoucher
     {
-        public int done { get; set; }
-        public string msg { get; set; }
-        public string microtime { get; set; }
-        public int status { get; set; }
-        public List<ItemVoucher> data { get; set; }
+        public int totalPage { get; set; }
+        public int totalResult { get; set; }
+        public List<ItemVoucher> items { get; set; }
     }
-    public class ItemVoucher
+    public class ItemVoucher : ItemVoucherBase
     {
-        public int id { get; set; }
-        public int branch { get; set; }
+        public string cat_title { get; set; }
+        public int stock { get; set; }
+        public string brandLogoLoyalty { get; set; }
+        public string brand_name { get; set; }
+        public int code_quantity { get; set; }
     }
 }

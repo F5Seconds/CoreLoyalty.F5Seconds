@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using CoreLoyalty.F5Seconds.Gateway.Models.Urox;
+using Newtonsoft.Json;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace CoreLoyalty.F5Seconds.Gateway.HttpClients
@@ -11,15 +13,32 @@ namespace CoreLoyalty.F5Seconds.Gateway.HttpClients
             _client = client;
         }
 
-        public async Task<HttpResponseMessage> VoucherListAsync()
+        public async Task<UrboxVoucherDetailData> VoucherDetailAsync(int id)
+        {
+            var response = await _client.GetAsync($"/api/gift/detail/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<UrboxVoucherDetailData>(jsonString);
+            }
+            return null;
+        }
+
+        public async Task<UrboxVoucherList> VoucherListAsync()
         {
             var response = await _client.GetAsync("/api/gift/lists");
-            return response;
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<UrboxVoucherList>(jsonString);
+            }
+            return null;
         }
     }
 
     public interface IUrboxClient
     {
-        Task<HttpResponseMessage> VoucherListAsync();
+        Task<UrboxVoucherList> VoucherListAsync();
+        Task<UrboxVoucherDetailData> VoucherDetailAsync(int id);
     }
 }
