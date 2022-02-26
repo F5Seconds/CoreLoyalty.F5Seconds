@@ -6,9 +6,8 @@ using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence
 {
@@ -23,10 +22,14 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence
             }
             else
             {
+                var serverVersion = new MySqlServerVersion(new Version(5, 7, 35));
                 services.AddDbContext<ApplicationDbContext>(options =>
-               options.UseSqlServer(
-                   configuration.GetConnectionString("DefaultConnection"),
-                   b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+                options.UseMySql(
+                    configuration.GetConnectionString("DefaultConnection"), serverVersion,
+                    b => {
+                        b.SchemaBehavior(MySqlSchemaBehavior.Ignore);
+                        b.MigrationsAssembly("CoreLoyalty.F5Seconds.Gateway");
+                    }));
             }
             #region Repositories
             services.AddTransient(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));

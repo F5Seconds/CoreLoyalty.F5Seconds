@@ -3,9 +3,6 @@ using CoreLoyalty.F5Seconds.Domain.Entities;
 using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Contexts;
 using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repository;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories
@@ -19,10 +16,10 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories
             _products = dbContext.Set<Product>();
         }
 
-        public Task<bool> IsUniqueBarcodeAsync(string barcode)
+        public Task<bool> IsUniqueBarcodeAsync(string code)
         {
             return _products
-                .AllAsync(p => p.Barcode != barcode);
+                .AllAsync(p => p.Code != code);
         }
     }
 }

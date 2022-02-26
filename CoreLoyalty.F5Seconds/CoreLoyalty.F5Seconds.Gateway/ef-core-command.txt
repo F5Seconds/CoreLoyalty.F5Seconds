@@ -1,0 +1,8 @@
+﻿dotnet ef database update --context IdentityContext --project CoreLoyalty.F5Seconds\CoreLoyalty.F5Seconds.Gateway
+dotnet ef database update --context ApplicationDbContext --project CoreLoyalty.F5Seconds\CoreLoyalty.F5Seconds.Gateway
+
+dotnet ef migrations add InitialCreate --context ApplicationDbContext --project CoreLoyalty.F5Seconds\CoreLoyalty.F5Seconds.Gateway
+dotnet ef migrations remove --context ApplicationDbContext
+
+netstat -ano -p TCP | find /I "5001"
+taskkill /F /PID 43656

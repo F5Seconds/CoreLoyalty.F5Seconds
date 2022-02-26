@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
@@ -32,10 +33,14 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Identity
             }
             else
             {
+                var serverVersion = new MySqlServerVersion(new Version(5, 7, 35));
                 services.AddDbContext<IdentityContext>(options =>
-                options.UseSqlServer(
-                    configuration.GetConnectionString("IdentityConnection"),
-                    b => b.MigrationsAssembly(typeof(IdentityContext).Assembly.FullName)));
+                options.UseMySql(
+                    configuration.GetConnectionString("IdentityConnection"), serverVersion,
+                    b => {
+                        b.SchemaBehavior(MySqlSchemaBehavior.Ignore);
+                        b.MigrationsAssembly(typeof(IdentityContext).Assembly.FullName);
+                    }));
             }
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<IdentityContext>().AddDefaultTokenProviders();
             #region Services

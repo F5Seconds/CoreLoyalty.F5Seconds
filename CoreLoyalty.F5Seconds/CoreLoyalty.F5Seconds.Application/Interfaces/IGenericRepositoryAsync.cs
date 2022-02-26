@@ -11,6 +11,7 @@ namespace CoreLoyalty.F5Seconds.Application.Interfaces
         Task<IReadOnlyList<T>> GetAllAsync();
         Task<IReadOnlyList<T>> GetPagedReponseAsync(int pageNumber, int pageSize);
         Task<T> AddAsync(T entity);
+        Task<int> AddRangeAsync(List<T> entities);
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
     }

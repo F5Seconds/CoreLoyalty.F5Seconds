@@ -58,5 +58,12 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repository
                  .Set<T>()
                  .ToListAsync();
         }
+
+        public async Task<int> AddRangeAsync(List<T> entities)
+        {
+            await _dbContext.Set<T>().AddRangeAsync(entities);
+            await _dbContext.SaveChangesAsync();
+            return entities.Count;
+        }
     }
 }
