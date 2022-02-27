@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CoreLoyalty.F5Seconds.Application.DTOs.F5seconds;
 using CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransaction;
+using CoreLoyalty.F5Seconds.Application.Features.GotIt.Queries.GetListVoucher;
 using CoreLoyalty.F5Seconds.Application.Interfaces.GotIt;
 using CoreLoyalty.F5Seconds.Application.Interfaces.Repositories;
 using CoreLoyalty.F5Seconds.Application.Interfaces.Urbox;
@@ -39,6 +40,11 @@ namespace CoreLoyalty.F5Seconds.Gateway.Controllers
             _cache = cache;
         }
 
+        [HttpGet("gotit-vouchers")]
+        public async Task<IActionResult> GetGotItVouchers()
+        {
+            return Ok(await Mediator.Send(new GetListGotItVoucherQuery()));
+        }
         [HttpGet("vouchers")]
         public async Task<IActionResult> GetVouchers()
         {
@@ -64,11 +70,16 @@ namespace CoreLoyalty.F5Seconds.Gateway.Controllers
             if (p.Partner.Equals("GOTIT"))
             {
                 var gotItDetail = await _gotItClient.VoucherDetailAsync(p.ProductId);
-                if (gotItDetail is null) return NotFound();
-                return Ok(_mapper.Map<F5sVoucherDetail>(gotItDetail, opt => opt.AfterMap((s, d) => { 
-                    d.productPartner = "GOTIT";
-                    d.productPrice = p.Price;
-                })));
+                if (gotItDetail.Succeeded)
+                {
+                    var f5sVoucherDetail = _mapper.Map<F5sVoucherDetail>(gotItDetail.Data, opt => opt.AfterMap((s, d) =>
+                    {
+                        d.productPartner = "GOTIT";
+                        d.productPrice = p.Price;
+                    }));
+                    return Ok(new Application.Wrappers.Response<F5sVoucherDetail>(true, f5sVoucherDetail));
+                }
+                return Ok(gotItDetail);
             }
             return BadRequest();
         }

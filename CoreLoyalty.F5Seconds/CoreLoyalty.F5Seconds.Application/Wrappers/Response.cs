@@ -9,11 +9,12 @@ namespace CoreLoyalty.F5Seconds.Application.Wrappers
         public Response()
         {
         }
-        public Response(T data, string message = null)
+        public Response(bool succeeded, T data, string message = null, List<string> error = null)
         {
-            Succeeded = true;
+            Succeeded = succeeded;
             Message = message;
             Data = data;
+            Errors = error;
         }
         public Response(string message)
         {

@@ -15,7 +15,7 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories.Urbox
             _client = client;  
         }
 
-        public async Task<UrboxBuyVocherRes> BuyVoucherAsync(UrboxBuyVoucher voucher)
+        public async Task<UrboxBuyVocherRes> BuyVoucherAsync(UrboxBuyVoucherReq voucher)
         {
             var content = new StringContent(JsonConvert.SerializeObject(voucher), Encoding.UTF8, "application/json");
             var response = await _client.PostAsync("/api/pay", content);

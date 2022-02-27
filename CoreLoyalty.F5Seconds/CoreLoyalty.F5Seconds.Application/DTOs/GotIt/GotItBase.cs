@@ -14,11 +14,5 @@
         public string link { get; set; }
     }
 
-    public class GotItBuyVoucher
-    {
-        public int productId { get; set; }
-        public int productPriceId { get; set; }
-        public int quantity { get; set; }
-        public string campaignNm { get; set; }
-    }
+    
 }

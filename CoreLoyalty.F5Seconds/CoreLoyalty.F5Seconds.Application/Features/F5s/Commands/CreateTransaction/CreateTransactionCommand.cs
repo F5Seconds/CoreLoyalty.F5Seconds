@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CoreLoyalty.F5Seconds.Application.DTOs.GotIt;
 using CoreLoyalty.F5Seconds.Application.DTOs.Urox;
 using CoreLoyalty.F5Seconds.Application.Interfaces.GotIt;
 using CoreLoyalty.F5Seconds.Application.Interfaces.Urbox;
@@ -45,17 +46,30 @@ namespace CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransact
                 if(p is null) return new Response<object>(false, "No data found");
                 if (p.Partner.Equals("URBOX"))
                 {
-                    var urboxBuyInfo = _mapper.Map<UrboxBuyVoucher>(request,opt => opt.AfterMap((s,d) => d.dataBuy = new List<UrboxBuyVoucherItem>()));
-                    urboxBuyInfo.dataBuy.Add(new UrboxBuyVoucherItem()
+                    var urboxBuyInfo = _mapper.Map<UrboxBuyVoucherReq>(request,opt => opt.AfterMap((s,d) => d.dataBuy = new List<UrboxBuyVoucherReq.UrboxBuyVoucherItem>()));
+                    urboxBuyInfo.dataBuy.Add(new UrboxBuyVoucherReq.UrboxBuyVoucherItem()
                     {
                         priceId = p.ProductId,
                         quantity = request.quantity
                     });
                     var urboxBuy = await _urboxClient.BuyVoucherAsync(urboxBuyInfo);
                     if(urboxBuy is null) return new Response<object>(false, "Bad request");
-                    return new Response<object>(urboxBuy);
+                    return new Response<object>(true,urboxBuy);
                 }
-                return new Response<object>(p);
+                if (p.Partner.Equals("GOTIT"))
+                {
+                    var gotItBuyInfo = _mapper.Map<GotItBuyVoucherReq>(request, opt => opt.AfterMap((s, d) => {
+                        d.productId = p.ProductId;
+                        d.productPriceId = p.Size; 
+                    }));
+                    var gotItBuy = await _gotItClient.BuyVoucherAsync(gotItBuyInfo);
+                    if (gotItBuy.Succeeded)
+                    {
+                        return new Response<object>(true, gotItBuy.Data);
+                    }
+                    return new Response<object>(false,null,gotItBuy.Message,gotItBuy.Errors);
+                }
+                return new Response<object>(false,p);
             }
         }
     }

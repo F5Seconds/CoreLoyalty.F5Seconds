@@ -1,17 +1,17 @@
 ﻿using AutoMapper;
 using CoreLoyalty.F5Seconds.Application.DTOs.F5seconds;
-using CoreLoyalty.F5Seconds.Application.Exceptions;
 using CoreLoyalty.F5Seconds.Application.Interfaces.GotIt;
+using CoreLoyalty.F5Seconds.Application.Wrappers;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CoreLoyalty.F5Seconds.Application.Features.GotIt.Queries.GetVoucher
 {
-    public class GetGotItVoucherQuery : IRequest<F5sVoucherBase>
+    public class GetGotItVoucherQuery : IRequest<Response<F5sVoucherBase>>
     {
         public int Id { get; set; }
-        public class GetGotItVoucherQueryHandler : IRequestHandler<GetGotItVoucherQuery, F5sVoucherBase>
+        public class GetGotItVoucherQueryHandler : IRequestHandler<GetGotItVoucherQuery, Response<F5sVoucherBase>>
         {
             private readonly IGotItHttpClientService _gotItHttpClientService;
             private readonly IMapper _mapper;
@@ -20,11 +20,14 @@ namespace CoreLoyalty.F5Seconds.Application.Features.GotIt.Queries.GetVoucher
                 _gotItHttpClientService = gotItHttpClientService;
                 _mapper = mapper;
             }
-            public async Task<F5sVoucherBase> Handle(GetGotItVoucherQuery request, CancellationToken cancellationToken)
+            public async Task<Response<F5sVoucherBase>> Handle(GetGotItVoucherQuery request, CancellationToken cancellationToken)
             {
                 var voucher = await _gotItHttpClientService.VoucherDetailAsync(request.Id);
-                if (voucher == null) throw new ApiException($"Not found data");
-                return _mapper.Map<F5sVoucherBase>(voucher);
+                if (voucher.Succeeded)
+                {
+                    return new Response<F5sVoucherBase>(true, _mapper.Map<F5sVoucherBase>(voucher.Data));
+                }
+                return new Response<F5sVoucherBase>(false, null, voucher.Message, voucher.Errors);
             }
         }
     }

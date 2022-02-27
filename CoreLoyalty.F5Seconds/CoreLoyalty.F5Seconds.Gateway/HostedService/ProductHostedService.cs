@@ -68,14 +68,17 @@ namespace CoreLoyalty.F5Seconds.Gateway.HostedService
                 var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                 var gotIt = await mediator.Send(new GetListGotItVoucherQuery());
                 var urbox = await mediator.Send(new GetListUrboxVoucherQuery());
-                vouchers.InsertRange(0, gotIt);
-                vouchers.InsertRange(gotIt.Count, urbox);
-                var v = _mapper.Map<List<Product>>(vouchers);
-                Uri uri = new Uri($"rabbitmq://{rabbitHost}/{rabbitvHost}/{productSyncQueue}");
-                var endPoint = await _bus.GetSendEndpoint(uri);
-                foreach (var i in v)
+                if (gotIt.Succeeded)
                 {
-                    await endPoint.Send(i);
+                    vouchers.InsertRange(0, gotIt.Data);
+                    vouchers.InsertRange(gotIt.Data.Count, urbox);
+                    var v = _mapper.Map<List<Product>>(vouchers);
+                    Uri uri = new Uri($"rabbitmq://{rabbitHost}/{rabbitvHost}/{productSyncQueue}");
+                    var endPoint = await _bus.GetSendEndpoint(uri);
+                    foreach (var i in v)
+                    {
+                        await endPoint.Send(i);
+                    }
                 }
             }
         }
