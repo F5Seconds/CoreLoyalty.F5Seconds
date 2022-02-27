@@ -32,9 +32,19 @@ namespace CoreLoyalty.F5Seconds.Application.DTOs.F5seconds
     {
         public string storeNm { get; set; }
         public string storeAddr { get; set; }
+        public string storePhone { get; set; }
         [Description("Số Lat trên bản đồ Google")]
         public float storeLat { get; set; }
         [Description("Số Long trên bản đồ Google")]
         public float storeLong { get; set; }
+    }
+
+    public class F5sBuyVoucher
+    {
+        public string propductId { get; set; }
+        public int quantity { get; set; }
+        public string transactionId { get; set; }
+        public string customerId { get; set; }
+        public string customerPhone { get; set; }
     }
 }

@@ -1,19 +1,15 @@
 ﻿using AutoMapper;
 using CoreLoyalty.F5Seconds.Application.DTOs.F5seconds;
-using CoreLoyalty.F5Seconds.Application.Features.GotIt.Queries.GetListVoucher;
-using CoreLoyalty.F5Seconds.Application.Features.Urbox.Queries.GetListVoucher;
+using CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransaction;
 using CoreLoyalty.F5Seconds.Application.Interfaces.GotIt;
 using CoreLoyalty.F5Seconds.Application.Interfaces.Repositories;
 using CoreLoyalty.F5Seconds.Application.Interfaces.Urbox;
-using CoreLoyalty.F5Seconds.Domain.Entities;
 using CoreLoyalty.F5Seconds.Domain.MemoryModels;
-using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Contexts;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -63,15 +59,24 @@ namespace CoreLoyalty.F5Seconds.Gateway.Controllers
             {
                 var urboxDetail = await _urboxClient.VoucherDetailAsync(p.ProductId);
                 if(urboxDetail is null) return NotFound();
-                return Ok(urboxDetail);
+                return Ok(_mapper.Map<F5sVoucherDetail>(urboxDetail,opt => opt.AfterMap((s,d) => d.productPartner = "URBOX")));
             }
             if (p.Partner.Equals("GOTIT"))
             {
                 var gotItDetail = await _gotItClient.VoucherDetailAsync(p.ProductId);
                 if (gotItDetail is null) return NotFound();
-                return Ok(gotItDetail);
+                return Ok(_mapper.Map<F5sVoucherDetail>(gotItDetail, opt => opt.AfterMap((s, d) => { 
+                    d.productPartner = "GOTIT";
+                    d.productPrice = p.Price;
+                })));
             }
             return BadRequest();
+        }
+
+        [HttpPost("transaction")]
+        public async Task<IActionResult> CreateTransaction(CreateTransactionCommand command)
+        {
+            return Ok(await Mediator.Send(command));
         }
     }
 }

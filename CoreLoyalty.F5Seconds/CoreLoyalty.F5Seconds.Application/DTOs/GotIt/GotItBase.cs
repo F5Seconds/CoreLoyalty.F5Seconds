@@ -1,6 +1,6 @@
 ﻿namespace CoreLoyalty.F5Seconds.Application.DTOs.GotIt
 {
-    public class ItemVoucherBase
+    public class GotItItemVoucherBase
     {
         public int productId { get; set; }
         public string productNm { get; set; }
@@ -12,6 +12,13 @@
         public string brandServiceGuide { get; set; }
         public int categoryId { get; set; }
         public string link { get; set; }
-        
+    }
+
+    public class GotItBuyVoucher
+    {
+        public int productId { get; set; }
+        public int productPriceId { get; set; }
+        public int quantity { get; set; }
+        public string campaignNm { get; set; }
     }
 }

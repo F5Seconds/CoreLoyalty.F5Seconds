@@ -1,21 +1,22 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace CoreLoyalty.F5Seconds.Application.DTOs.Urox
 {
-    public class UrboxMessageBas
+    public class UrboxMessageBase
     {
         public int done { get; set; }
         public string msg { get; set; }
         public string microtime { get; set; }
         public int status { get; set; }
     }
-    public class ItemVoucherBase
+    public class GotItItemVoucherBase
     {
         [Description("Mã quà tặng. Sử dụng để gọi API tạo đơn quà tặng ở trường priceId")]
         public int id { get; set; }
         
         [Description("Tên thương hiệu")]
-        public int branch { get; set; }
+        public string brand { get; set; }
         
         [Description("Mã thương hiệu")]
         public int brand_id { get; set; }
@@ -65,4 +66,6 @@ namespace CoreLoyalty.F5Seconds.Application.DTOs.Urox
         [Description("")]
         public string parent_cat_id { get; set; }
     }
+
+    
 }

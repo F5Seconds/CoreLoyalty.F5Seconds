@@ -2,11 +2,11 @@
 
 namespace CoreLoyalty.F5Seconds.Application.DTOs.Urox
 {
-    public class UrboxVoucherDetailData : UrboxMessageBas
+    public class UrboxVoucherDetailData : UrboxMessageBase
     {
         public UrboxVoucherDetail data { get; set; }
     }
-    public class UrboxVoucherDetail: ItemVoucherBase
+    public class UrboxVoucherDetail: GotItItemVoucherBase
     {
         public int justGetOrder { get; set; }
         //public List<string> images_rectangle { get; set; }

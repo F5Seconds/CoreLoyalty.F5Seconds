@@ -2,7 +2,7 @@
 
 namespace CoreLoyalty.F5Seconds.Application.DTOs.Urox
 {
-    public class UrboxVoucherList: UrboxMessageBas
+    public class UrboxVoucherList: UrboxMessageBase
     {
         public DataVoucher data { get; set; }
     }
@@ -13,7 +13,7 @@ namespace CoreLoyalty.F5Seconds.Application.DTOs.Urox
         public int totalResult { get; set; }
         public List<ItemVoucher> items { get; set; }
     }
-    public class ItemVoucher : ItemVoucherBase
+    public class ItemVoucher : GotItItemVoucherBase
     {
         public string cat_title { get; set; }
         public int stock { get; set; }

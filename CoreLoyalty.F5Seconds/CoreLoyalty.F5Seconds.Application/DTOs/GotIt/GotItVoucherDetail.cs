@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CoreLoyalty.F5Seconds.Application.DTOs.GotIt
 {
-    public class GotItVoucherDetail : ItemVoucherBase
+    public class GotItVoucherDetail : GotItItemVoucherBase
     {
         //public List<string> productSubImg { get; set; }
         public string brandNameSlug { get; set; }
@@ -31,6 +31,7 @@ namespace CoreLoyalty.F5Seconds.Application.DTOs.GotIt
         
         [JsonProperty("lat")]
         public float storeLat { get; set; }
+        public string phone { get; set; }
         public int city_id { get; set; }
         public string city { get; set; }
         public int dist_id { get; set; }

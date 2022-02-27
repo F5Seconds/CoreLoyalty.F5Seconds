@@ -7,5 +7,6 @@ namespace CoreLoyalty.F5Seconds.Application.Interfaces.Urbox
     {
         Task<UrboxVoucherList> VoucherListAsync();
         Task<UrboxVoucherDetailData> VoucherDetailAsync(int id);
+        Task<UrboxBuyVocherRes> BuyVoucherAsync(UrboxBuyVoucher voucher);
     }
 }

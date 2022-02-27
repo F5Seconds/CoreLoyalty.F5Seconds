@@ -2,6 +2,7 @@
 using CoreLoyalty.F5Seconds.Application.Interfaces.Urbox;
 using Newtonsoft.Json;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories.Urbox
@@ -12,6 +13,18 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories.Urbox
         public IUboxHttpClientRepository(HttpClient client)
         {
             _client = client;  
+        }
+
+        public async Task<UrboxBuyVocherRes> BuyVoucherAsync(UrboxBuyVoucher voucher)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(voucher), Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync("/api/pay", content);
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<UrboxBuyVocherRes>(jsonString);
+            }
+            return null;
         }
 
         public async Task<UrboxVoucherDetailData> VoucherDetailAsync(int id)

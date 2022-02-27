@@ -2,6 +2,7 @@
 using CoreLoyalty.F5Seconds.Application.DTOs.F5seconds;
 using CoreLoyalty.F5Seconds.Application.DTOs.GotIt;
 using CoreLoyalty.F5Seconds.Application.DTOs.Urox;
+using CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransaction;
 using CoreLoyalty.F5Seconds.Domain.Common;
 using CoreLoyalty.F5Seconds.Domain.Entities;
 using CoreLoyalty.F5Seconds.Domain.MemoryModels;
@@ -22,6 +23,8 @@ namespace CoreLoyalty.F5Seconds.Application.Mappings
                 .ForMember(d => d.productTyp, m => m.MapFrom(s => s.data.type))
                 .ForMember(d => d.productContent, m => m.MapFrom(s => s.data.content))
                 .ForMember(d => d.productTerm, m => m.MapFrom(s => s.data.note))
+                .ForMember(d => d.brandNm, m => m.MapFrom(s => s.data.brand))
+                .ForMember(d => d.brandLogo, m => m.MapFrom(s => s.data.brandImage))
                 .ForMember(d => d.storeList, m => m.MapFrom(s => s.data.office));
             CreateMap<ItemVoucher, F5sVoucherBase>()
                 .ForMember(d => d.productId, m => m.MapFrom(s => s.id))
@@ -33,11 +36,15 @@ namespace CoreLoyalty.F5Seconds.Application.Mappings
                 .ForMember(d => d.brandLogo, m => m.MapFrom(s => s.brandImage));
             CreateMap<UrboxVoucherOffice, F5sVoucherOffice>()
                 .ForMember(d => d.storeAddr, m => m.MapFrom(s => s.address))
+                .ForMember(d => d.storePhone, m => m.MapFrom(s => s.phone))
                 .ForMember(d => d.storeLong, m => m.MapFrom(s => s.longitude))
                 .ForMember(d => d.storeLat, m => m.MapFrom(s => s.latitude));
-            CreateMap<GotItVoucherDetail, F5sVoucherBase>();
+            CreateMap<GotItVoucherDetail, F5sVoucherDetail>()
+                .ForMember(d => d.productContent, m => m.MapFrom(s => s.productDesc))
+                .ForMember(d => d.productTerm, m => m.MapFrom(s => s.terms));
             CreateMap<GotItVoucherItem, F5sVoucherBase>();
-            CreateMap<GotItVoucherDetailStore, F5sVoucherOffice>();
+            CreateMap<GotItVoucherDetailStore, F5sVoucherOffice>()
+                .ForMember(d => d.storePhone, m => m.MapFrom(s => s.phone));
             CreateMap<F5sVoucherBase, Product>()
                 .ForMember(d => d.Code, m => m.MapFrom(s => $"F5S.{Helpers.RandomString(6)}"))
                 .ForMember(d => d.ProductId, m => m.MapFrom(s => s.productId))
@@ -53,6 +60,10 @@ namespace CoreLoyalty.F5Seconds.Application.Mappings
                 .ForMember(d => d.CreatedBy, m => m.MapFrom(s => "administrator@f5seconds.vn"))
                 .ForMember(d => d.Created, m => m.MapFrom(s => DateTime.Now));
             CreateMap<Product, ProductMemory>();
+            CreateMap<CreateTransactionCommand, UrboxBuyVoucher>()
+                .ForMember(d => d.transaction_id, m => m.MapFrom(s => s.transactionId))
+                .ForMember(d => d.site_user_id, m => m.MapFrom(s => s.customerId))
+                .ForMember(d => d.ttphone, m => m.MapFrom(s => s.customerId));
         }
         
     }

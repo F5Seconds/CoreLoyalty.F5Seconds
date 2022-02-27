@@ -7,7 +7,7 @@ namespace CoreLoyalty.F5Seconds.Application.DTOs.GotIt
         public List<GotItVoucherItem> productList { get; set; }
         public PaginationGotItVoucherList pagination { get; set; }
     }
-    public class GotItVoucherItem : ItemVoucherBase
+    public class GotItVoucherItem : GotItItemVoucherBase
     {
         public string categoryNm { get; set; }
         public List<GotItVoucherItemSize> size { get; set; }
