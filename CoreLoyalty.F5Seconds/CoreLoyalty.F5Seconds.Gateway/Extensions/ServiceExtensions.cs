@@ -20,13 +20,20 @@ namespace CoreLoyalty.F5Seconds.Gateway.Extensions
 {
     public static class ServiceExtensions
     {
-        public static void AddHttpClientExtension(this IServiceCollection services)
+        public static void AddHttpClientExtension(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
         {
+            string gotItUri = configuration["PartnerUri:GotIt"];
+            string urboxUri = configuration["PartnerUri:Urbox"];
+            if (env.IsProduction())
+            {
+                gotItUri = Environment.GetEnvironmentVariable("PARTNER_URI_GOTIT");
+                urboxUri = Environment.GetEnvironmentVariable("PARTNER_URI_URBOX");
+            }
             services.AddHttpClient<IGotItHttpClientService, GotItHttpClientRepository>(c => { 
-                c.BaseAddress = new Uri("https://localhost:5001"); 
+            c.BaseAddress = new Uri(gotItUri); 
             });
             services.AddHttpClient<IUrboxHttpClientService, IUboxHttpClientRepository>(c => { 
-                c.BaseAddress = new Uri("https://localhost:5004"); 
+                c.BaseAddress = new Uri(urboxUri); 
             });
         }
 

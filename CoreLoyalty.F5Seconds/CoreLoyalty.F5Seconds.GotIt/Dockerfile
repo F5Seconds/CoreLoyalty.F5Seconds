@@ -1,8 +1,8 @@
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-focal AS base
 WORKDIR /app
-EXPOSE 5052
+EXPOSE 5051
 
-ENV ASPNETCORE_URLS=http://+:5052
+ENV ASPNETCORE_URLS=http://+:5051
 ENV ASPNETCORE_ENVIRONMENT=Production
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
 # For more info, please refer to https://aka.ms/vscode-docker-dotnet-configure-containers
@@ -11,16 +11,16 @@ USER appuser
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-focal AS build
 WORKDIR /src
-COPY ["CoreLoyalty.F5Seconds.Urbox.csproj", "/"]
+COPY ["CoreLoyalty.F5Seconds.GotIt.csproj", "/"]
 COPY . .
 WORKDIR "/src"
 
 FROM build AS publish
-RUN dotnet publish "CoreLoyalty.F5Seconds.Urbox.csproj" -c Release -o /app/publish
+RUN dotnet publish "CoreLoyalty.F5Seconds.GotIt.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ADD ocelot.json /app/
 ADD ocelot.Production.json /app/
-ENTRYPOINT ["dotnet", "CoreLoyalty.F5Seconds.Urbox.dll"]
+ENTRYPOINT ["dotnet", "CoreLoyalty.F5Seconds.GotIt.dll"]

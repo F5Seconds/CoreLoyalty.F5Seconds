@@ -1,47 +1,42 @@
-﻿using CoreLoyalty.F5Seconds.Application.Exceptions;
-using CoreLoyalty.F5Seconds.Application.Interfaces;
+﻿using CoreLoyalty.F5Seconds.Application.Interfaces;
 using CoreLoyalty.F5Seconds.Application.Wrappers;
 using CoreLoyalty.F5Seconds.Domain.Settings;
 using CoreLoyalty.F5Seconds.Infrastructure.Identity.Contexts;
-using CoreLoyalty.F5Seconds.Infrastructure.Identity.Helpers;
 using CoreLoyalty.F5Seconds.Infrastructure.Identity.Models;
 using CoreLoyalty.F5Seconds.Infrastructure.Identity.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System;
-using System.Reflection.Metadata.Ecma335;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CoreLoyalty.F5Seconds.Infrastructure.Identity
 {
     public static class ServiceExtensions
     {
-        public static void AddIdentityInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        public static void AddIdentityInfrastructure(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
         {
-            if (configuration.GetValue<bool>("UseInMemoryDatabase"))
+            string identityConStr = configuration.GetConnectionString("IdentityConnection");
+            if (env.IsProduction())
             {
-                services.AddDbContext<IdentityContext>(options =>
-                    options.UseInMemoryDatabase("IdentityDb"));
+                identityConStr = Environment.GetEnvironmentVariable("DB_URI_IDENTITY");
             }
-            else
-            {
                 var serverVersion = new MySqlServerVersion(new Version(5, 7, 35));
-                services.AddDbContext<IdentityContext>(options =>
-                options.UseMySql(
-                    configuration.GetConnectionString("IdentityConnection"), serverVersion,
-                    b => {
-                        b.SchemaBehavior(MySqlSchemaBehavior.Ignore);
-                        b.MigrationsAssembly(typeof(IdentityContext).Assembly.FullName);
-                    }));
-            }
+            services.AddDbContext<IdentityContext>(options =>
+            options.UseMySql(
+                identityConStr, serverVersion,
+                b => {
+                    b.SchemaBehavior(MySqlSchemaBehavior.Ignore);
+                    b.MigrationsAssembly(typeof(IdentityContext).Assembly.FullName);
+                }));
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<IdentityContext>().AddDefaultTokenProviders();
             #region Services
             services.AddTransient<IAccountService, AccountService>();

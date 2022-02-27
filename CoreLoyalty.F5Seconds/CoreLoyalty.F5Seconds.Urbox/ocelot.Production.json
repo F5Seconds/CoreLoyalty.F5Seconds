@@ -1,142 +1,84 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/api/category/getAll",
+      "DownstreamPathTemplate": "/4.0/gift/lists?app_id=500000114&app_secret=72bf8db101aa8c41d18cd1c326f7d51a",
+      "DownstreamScheme": "https",
+      "UpstreamPathTemplate": "/api/gift/lists",
+      "UpstreamHttpMethod": [ "Get" ],
+      "SwaggerKey": "contacts",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "sandapi.urbox.dev",
+          "Port": 443
+        }
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/4.0/gift/detail?app_id=500000114&app_secret=72bf8db101aa8c41d18cd1c326f7d51a&lang=vi&id={id}",
+      "DownstreamScheme": "https",
+      "UpstreamPathTemplate": "/api/gift/detail/{id}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "SwaggerKey": "contacts",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "sandapi.urbox.dev",
+          "Port": 443
+        }
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/4.0/gift/category/catbyparent?app_id=500000114&app_secret=72bf8db101aa8c41d18cd1c326f7d51a&lang=vi",
       "DownstreamScheme": "https",
       "UpstreamPathTemplate": "/api/categories",
       "UpstreamHttpMethod": [ "Get" ],
+      "SwaggerKey": "contacts",
       "DownstreamHostAndPorts": [
         {
-          "Host": "biz-stg.gotit.vn",
+          "Host": "sandapi.urbox.dev",
           "Port": 443
         }
-      ],
-      "UpstreamHeaderTransform": {
-        "X-GI-Authorization": "d084e182915cda011778889ad6d6f7950d1f4880544d6bf7a631d7c4df10fc08"
-      }
+      ]
     },
     {
-      "DownstreamPathTemplate": "/api/brand/getAll",
+      "DownstreamPathTemplate": "/4.0/gift/brand?app_id=500000114&app_secret=72bf8db101aa8c41d18cd1c326f7d51a",
       "DownstreamScheme": "https",
       "UpstreamPathTemplate": "/api/brands",
       "UpstreamHttpMethod": [ "Get" ],
+      "SwaggerKey": "contacts",
       "DownstreamHostAndPorts": [
         {
-          "Host": "biz-stg.gotit.vn",
+          "Host": "sandapi.urbox.dev",
           "Port": 443
         }
-      ],
-      "UpstreamHeaderTransform": {
-        "X-GI-Authorization": "d084e182915cda011778889ad6d6f7950d1f4880544d6bf7a631d7c4df10fc08"
-      }
+      ]
     },
     {
-      "DownstreamPathTemplate": "/api/brand/{CategoryID}",
+      "DownstreamPathTemplate": "/2.0/cart/getByTransaction?app_id=500000114&app_secret=72bf8db101aa8c41d18cd1c326f7d51a&transaction_id={trans_id}",
       "DownstreamScheme": "https",
-      "UpstreamPathTemplate": "/api/brand/{CategoryID}",
+      "UpstreamPathTemplate": "/api/transaction/{trans_id}",
       "UpstreamHttpMethod": [ "Get" ],
+      "SwaggerKey": "contacts",
       "DownstreamHostAndPorts": [
         {
-          "Host": "biz-stg.gotit.vn",
+          "Host": "sandapi.urbox.dev",
           "Port": 443
         }
-      ],
-      "UpstreamHeaderTransform": {
-        "X-GI-Authorization": "d084e182915cda011778889ad6d6f7950d1f4880544d6bf7a631d7c4df10fc08"
-      }
+      ]
     },
     {
-      "DownstreamPathTemplate": "/api/brand/detail/{id}",
+      "DownstreamPathTemplate": "/2.0/cart/cartPayVoucher?app_id=500000114&app_secret=72bf8db101aa8c41d18cd1c326f7d51a",
       "DownstreamScheme": "https",
-      "UpstreamPathTemplate": "/api/brand/detail/{id}",
-      "UpstreamHttpMethod": [ "Get" ],
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "biz-stg.gotit.vn",
-          "Port": 443
-        }
-      ],
-      "UpstreamHeaderTransform": {
-        "X-GI-Authorization": "d084e182915cda011778889ad6d6f7950d1f4880544d6bf7a631d7c4df10fc08"
-      }
-    },
-    {
-      "DownstreamPathTemplate": "/api/product/list",
-      "DownstreamScheme": "https",
-      "UpstreamPathTemplate": "/api/product/list",
+      "UpstreamPathTemplate": "/api/pay",
       "UpstreamHttpMethod": [ "Post" ],
       "DownstreamHostAndPorts": [
         {
-          "Host": "biz-stg.gotit.vn",
+          "Host": "sandapi.urbox.dev",
           "Port": 443
         }
-      ],
-      "UpstreamHeaderTransform": {
-        "X-GI-Authorization": "d084e182915cda011778889ad6d6f7950d1f4880544d6bf7a631d7c4df10fc08"
-      }
-    },
-    {
-      "DownstreamPathTemplate": "/api/product/detail",
-      "DownstreamScheme": "https",
-      "UpstreamPathTemplate": "/api/product/detail",
-      "UpstreamHttpMethod": [ "Post" ],
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "biz-stg.gotit.vn",
-          "Port": 443
-        }
-      ],
-      "UpstreamHeaderTransform": {
-        "X-GI-Authorization": "d084e182915cda011778889ad6d6f7950d1f4880544d6bf7a631d7c4df10fc08"
-      }
-    },
-    {
-      "DownstreamPathTemplate": "/api/transaction",
-      "DownstreamScheme": "https",
-      "UpstreamPathTemplate": "/api/transaction",
-      "UpstreamHttpMethod": [ "Post" ],
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "biz-stg.gotit.vn",
-          "Port": 443
-        }
-      ],
-      "UpstreamHeaderTransform": {
-        "X-GI-Authorization": "d084e182915cda011778889ad6d6f7950d1f4880544d6bf7a631d7c4df10fc08"
-      }
-    },
-    {
-      "DownstreamPathTemplate": "/api/transaction/check",
-      "DownstreamScheme": "https",
-      "UpstreamPathTemplate": "/api/transaction/check",
-      "UpstreamHttpMethod": [ "Post" ],
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "biz-stg.gotit.vn",
-          "Port": 443
-        }
-      ],
-      "UpstreamHeaderTransform": {
-        "X-GI-Authorization": "d084e182915cda011778889ad6d6f7950d1f4880544d6bf7a631d7c4df10fc08"
-      }
-    },
-    {
-      "DownstreamPathTemplate": "/api/webhook/gotit",
-      "DownstreamScheme": "https",
-      "UpstreamPathTemplate": "/api/m1/gotit",
-      "UpstreamHttpMethod": [ "Post" ],
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "eximbankadmin.mediaone.dev",
-          "Port": 443
-        }
-      ],
-      "UpstreamHeaderTransform": {
-        "Authorization": "Basic f7af4bc5-c32f-4e94-9426-f59acb31408c"
-      }
+      ]
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:5001"
+    "BaseUrl": "urbox"
   }
 }

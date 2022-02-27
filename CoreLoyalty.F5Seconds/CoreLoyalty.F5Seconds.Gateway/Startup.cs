@@ -38,13 +38,16 @@ namespace CoreLoyalty.F5Seconds.Gateway
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationLayer();
-            services.AddIdentityInfrastructure(_config);
-            services.AddPersistenceInfrastructure(_config);
+            services.AddIdentityInfrastructure(_config,_env);
+            services.AddPersistenceInfrastructure(_config,_env.IsProduction());
             services.AddSharedInfrastructure(_config);
             services.AddSettingsExtension(_config);
             services.AddHostedService();
-            services.AddHttpClientExtension();
-            services.AddSwaggerExtension();
+            services.AddHttpClientExtension(_config,_env);
+            if (_env.IsDevelopment())
+            {
+                services.AddSwaggerExtension();
+            }
             services.AddControllers();
             services.AddApiVersioningExtension();
             services.AddHealthChecks();
@@ -59,14 +62,12 @@ namespace CoreLoyalty.F5Seconds.Gateway
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CoreLoyalty.F5Seconds.Gateway v1"));
+                app.UseSwaggerExtension();
             }
 
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
-            app.UseSwaggerExtension();
             app.UseHealthChecks("/health");
             app.UseEndpoints(endpoints =>
             {

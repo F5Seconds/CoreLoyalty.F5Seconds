@@ -13,15 +13,17 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence
 {
     public static class ServiceRegistration
     {
-        public static void AddPersistenceInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        public static void AddPersistenceInfrastructure(this IServiceCollection services, IConfiguration configuration, bool isProduction)
         {
-
-            services.AddDbContext<MemoryDbContext>(options =>
-                options.UseInMemoryDatabase("MemoryDbContext"), ServiceLifetime.Scoped, ServiceLifetime.Scoped);
+            string appConStr = configuration.GetConnectionString("DefaultConnection");
+            if (isProduction)
+            {
+                appConStr = Environment.GetEnvironmentVariable("DB_URI_APPLICATION");
+            }
             var serverVersion = new MySqlServerVersion(new Version(5, 7, 35));
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseMySql(
-                configuration.GetConnectionString("DefaultConnection"), serverVersion,
+                appConStr, serverVersion,
                 b => {
                     b.SchemaBehavior(MySqlSchemaBehavior.Ignore);
                     b.MigrationsAssembly("CoreLoyalty.F5Seconds.Gateway");
