@@ -29,7 +29,7 @@ namespace CoreLoyalty.F5Seconds.Application.DTOs.GotIt
             pagination = new PayloadPaginationGotItVoucherList()
             {
                 page = 1,
-                pageSize = 10,
+                pageSize = 10000,
                 pageTotal = 20
             };
         }

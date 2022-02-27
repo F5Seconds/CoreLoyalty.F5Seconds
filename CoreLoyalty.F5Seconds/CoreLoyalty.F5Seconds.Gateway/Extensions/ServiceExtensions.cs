@@ -1,5 +1,7 @@
 ﻿using CoreLoyalty.F5Seconds.Application.Interfaces.GotIt;
 using CoreLoyalty.F5Seconds.Application.Interfaces.Urbox;
+using CoreLoyalty.F5Seconds.Domain.Settings;
+using CoreLoyalty.F5Seconds.Gateway.HostedService;
 using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories.GotIt;
 using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories.Urbox;
 using CoreLoyalty.F5Seconds.Shared.RabbitMq.Consumer;
@@ -90,9 +92,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Extensions
             string rabbitvHost = configuration["RabbitMqSettings:vHost"];
             string rabbitUser = configuration["RabbitMqSettings:Username"];
             string rabbitPass = configuration["RabbitMqSettings:Password"];
-            string rabbitEmployeeSync = configuration["RabbitMqSettings:EmployeesSyncQueue"];
-            string rabbitWorkPlaceSync = configuration["RabbitMqSettings:WorkPlaceSyncQueue"];
-            string rabbitReportMail = configuration["RabbitMqSettings:ReportsMailQueue"];
+            string rabbitEmployeeSync = configuration["RabbitMqSettings:ProductSyncQueue"];
 
             if (env.IsProduction())
             {
@@ -100,9 +100,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Extensions
                 rabbitvHost = Environment.GetEnvironmentVariable("RABBITMQ_VHOST");
                 rabbitUser = Environment.GetEnvironmentVariable("RABBITMQ_USER");
                 rabbitPass = Environment.GetEnvironmentVariable("RABBITMQ_PASS");
-                rabbitEmployeeSync = Environment.GetEnvironmentVariable("RABBITMQ_EMPLOYEESSYNC");
-                rabbitWorkPlaceSync = Environment.GetEnvironmentVariable("RABBITMQ_WORKPLACESYNC");
-                rabbitReportMail = Environment.GetEnvironmentVariable("RABBITMQ_REPORT_MAIL");
+                rabbitEmployeeSync = Environment.GetEnvironmentVariable("RABBITMQ_PRODUCTSYNC");
             }
 
             services.AddMassTransit(x =>
@@ -124,6 +122,15 @@ namespace CoreLoyalty.F5Seconds.Gateway.Extensions
                 }));
             });
             services.AddMassTransitHostedService();
+        }
+        public static void AddSettingsExtension(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<RabbitMqSettings>(configuration.GetSection("RabbitMqSettings"));
+        }
+        public static void AddHostedService(this IServiceCollection services)
+        {
+            services.AddHostedService<ProductHostedService>();
+            services.AddHostedService<ProductMemoryHostedService>();
         }
     }
 }

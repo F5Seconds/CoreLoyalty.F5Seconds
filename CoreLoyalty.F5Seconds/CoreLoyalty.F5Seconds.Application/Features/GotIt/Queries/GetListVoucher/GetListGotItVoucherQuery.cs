@@ -4,6 +4,7 @@ using CoreLoyalty.F5Seconds.Application.DTOs.GotIt;
 using CoreLoyalty.F5Seconds.Application.Interfaces.GotIt;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -36,9 +37,18 @@ namespace CoreLoyalty.F5Seconds.Application.Features.GotIt.Queries.GetListVouche
                     {
                         foreach (var iSize in item.size)
                         {
-                            itemV.productSize = iSize.priceId;
-                            itemV.productPrice = iSize.priceValue;
-                            listV.Add(itemV);
+                            listV.Add(new F5sVoucherBase()
+                            {
+                                brandLogo = itemV.brandLogo,
+                                brandNm = itemV.brandNm,
+                                productId = itemV.productId,
+                                productImg = itemV.productImg,
+                                productNm = itemV.productNm,
+                                productPartner = itemV.productPartner,
+                                productPrice = iSize.priceValue,
+                                productSize = iSize.priceId,
+                                productTyp = itemV.productTyp 
+                            });
                         }
                     }
                     else

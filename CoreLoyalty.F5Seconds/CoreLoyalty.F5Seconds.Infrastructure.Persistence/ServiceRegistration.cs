@@ -15,22 +15,17 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence
     {
         public static void AddPersistenceInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            if (configuration.GetValue<bool>("UseInMemoryDatabase"))
-            {
-                services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseInMemoryDatabase("ApplicationDb"));
-            }
-            else
-            {
-                var serverVersion = new MySqlServerVersion(new Version(5, 7, 35));
-                services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseMySql(
-                    configuration.GetConnectionString("DefaultConnection"), serverVersion,
-                    b => {
-                        b.SchemaBehavior(MySqlSchemaBehavior.Ignore);
-                        b.MigrationsAssembly("CoreLoyalty.F5Seconds.Gateway");
-                    }));
-            }
+
+            services.AddDbContext<MemoryDbContext>(options =>
+                options.UseInMemoryDatabase("MemoryDbContext"), ServiceLifetime.Scoped, ServiceLifetime.Scoped);
+            var serverVersion = new MySqlServerVersion(new Version(5, 7, 35));
+            services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseMySql(
+                configuration.GetConnectionString("DefaultConnection"), serverVersion,
+                b => {
+                    b.SchemaBehavior(MySqlSchemaBehavior.Ignore);
+                    b.MigrationsAssembly("CoreLoyalty.F5Seconds.Gateway");
+                }));
             #region Repositories
             services.AddTransient(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
             services.AddTransient<IProductRepositoryAsync, ProductRepositoryAsync>();

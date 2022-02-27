@@ -10,17 +10,29 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace CoreLoyalty.F5Seconds.Gateway
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IWebHostEnvironment _env;
+        private readonly ILogger<Startup> _logger;
+        public IConfiguration _config { get; }
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             _config = configuration;
+            _env = env;
+            using var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.SetMinimumLevel(LogLevel.Information);
+                builder.AddConsole();
+                builder.AddEventSourceLogger();
+            });
+            _logger = loggerFactory.CreateLogger<Startup>();
         }
 
-        public IConfiguration _config { get; }
+        
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -29,11 +41,15 @@ namespace CoreLoyalty.F5Seconds.Gateway
             services.AddIdentityInfrastructure(_config);
             services.AddPersistenceInfrastructure(_config);
             services.AddSharedInfrastructure(_config);
+            services.AddSettingsExtension(_config);
+            services.AddHostedService();
             services.AddHttpClientExtension();
             services.AddSwaggerExtension();
             services.AddControllers();
             services.AddApiVersioningExtension();
             services.AddHealthChecks();
+            services.AddMemoryCache();
+            services.AddRabbitMqExtension(_config,_env);
             services.AddScoped<IAuthenticatedUserService, AuthenticatedUserService>();
         }
 

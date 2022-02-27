@@ -4,6 +4,7 @@ using CoreLoyalty.F5Seconds.Application.DTOs.GotIt;
 using CoreLoyalty.F5Seconds.Application.DTOs.Urox;
 using CoreLoyalty.F5Seconds.Domain.Common;
 using CoreLoyalty.F5Seconds.Domain.Entities;
+using CoreLoyalty.F5Seconds.Domain.MemoryModels;
 using System;
 using System.Text;
 
@@ -51,6 +52,7 @@ namespace CoreLoyalty.F5Seconds.Application.Mappings
                 .ForMember(d => d.BrandName, m => m.MapFrom(s => s.brandNm))
                 .ForMember(d => d.CreatedBy, m => m.MapFrom(s => "administrator@f5seconds.vn"))
                 .ForMember(d => d.Created, m => m.MapFrom(s => DateTime.Now));
+            CreateMap<Product, ProductMemory>();
         }
         
     }
