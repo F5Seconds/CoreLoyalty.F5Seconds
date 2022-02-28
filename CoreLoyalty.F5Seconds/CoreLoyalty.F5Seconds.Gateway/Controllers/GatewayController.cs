@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using CoreLoyalty.F5Seconds.Application.DTOs.F5seconds;
 using CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransaction;
+using CoreLoyalty.F5Seconds.Application.Features.F5s.Queries.GetVoucher;
 using CoreLoyalty.F5Seconds.Application.Features.GotIt.Queries.GetListVoucher;
+using CoreLoyalty.F5Seconds.Application.Features.Urbox.Queries.GetListVoucher;
 using CoreLoyalty.F5Seconds.Application.Interfaces.GotIt;
 using CoreLoyalty.F5Seconds.Application.Interfaces.Repositories;
 using CoreLoyalty.F5Seconds.Application.Interfaces.Urbox;
+using CoreLoyalty.F5Seconds.Domain.Entities;
 using CoreLoyalty.F5Seconds.Domain.MemoryModels;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
@@ -20,15 +23,15 @@ namespace CoreLoyalty.F5Seconds.Gateway.Controllers
     [ApiController]
     public class GatewayController : BaseApiController
     {
-        private readonly IUrboxHttpClientService _urboxClient;
-        private readonly IGotItHttpClientService _gotItClient;
+        private readonly IUrboxHttpClientExternalService _urboxClient;
+        private readonly IGotItHttpClientExternalService _gotItClient;
         private readonly IProductRepositoryAsync _productRepositoryAsync;
         private readonly IMapper _mapper;
         private readonly IBus _bus;
         private readonly IConfiguration _config;
         private readonly ILogger<GatewayController> _logger;
         private IMemoryCache _cache;
-        public GatewayController(IUrboxHttpClientService urboxClient, IGotItHttpClientService gotItClient, IProductRepositoryAsync productRepositoryAsync, IMapper mapper, IBus bus, IConfiguration config, ILogger<GatewayController> logger, IMemoryCache cache)
+        public GatewayController(IUrboxHttpClientExternalService urboxClient, IGotItHttpClientExternalService gotItClient, IProductRepositoryAsync productRepositoryAsync, IMapper mapper, IBus bus, IConfiguration config, ILogger<GatewayController> logger, IMemoryCache cache)
         {
             _urboxClient = urboxClient;
             _gotItClient = gotItClient;
@@ -45,43 +48,25 @@ namespace CoreLoyalty.F5Seconds.Gateway.Controllers
         {
             return Ok(await Mediator.Send(new GetListGotItVoucherQuery()));
         }
+
         [HttpGet("vouchers")]
         public async Task<IActionResult> GetVouchers()
         {
-            var products = await _productRepositoryAsync.GetAllAsync();
-            if(products is null) return NotFound();
-            return Ok(products);
+            var vouchers = new List<F5sVoucherBase>();
+            var gotIt = await Mediator.Send(new GetListGotItVoucherQuery());
+            var urbox = await Mediator.Send(new GetListUrboxVoucherQuery());
+            if (gotIt.Succeeded && urbox.Succeeded)
+            {
+                vouchers.InsertRange(0, gotIt.Data);
+                vouchers.InsertRange(gotIt.Data.Count, urbox.Data);
+            }
+            return Ok(_mapper.Map<List<Product>>(vouchers));
         }
 
         [HttpGet("voucher/{id}")]
         public async Task<IActionResult> GetMemoryVouchers(string id)
         {
-            List<ProductMemory> products;
-            _cache.TryGetValue("ProductCache", out products);
-            if(products is null) return NotFound();
-            var p = products.SingleOrDefault(x => x.Code.Equals(id));
-            if(p is null) return NotFound();
-            if (p.Partner.Equals("URBOX"))
-            {
-                var urboxDetail = await _urboxClient.VoucherDetailAsync(p.ProductId);
-                if(urboxDetail is null) return NotFound();
-                return Ok(_mapper.Map<F5sVoucherDetail>(urboxDetail,opt => opt.AfterMap((s,d) => d.productPartner = "URBOX")));
-            }
-            if (p.Partner.Equals("GOTIT"))
-            {
-                var gotItDetail = await _gotItClient.VoucherDetailAsync(p.ProductId);
-                if (gotItDetail.Succeeded)
-                {
-                    var f5sVoucherDetail = _mapper.Map<F5sVoucherDetail>(gotItDetail.Data, opt => opt.AfterMap((s, d) =>
-                    {
-                        d.productPartner = "GOTIT";
-                        d.productPrice = p.Price;
-                    }));
-                    return Ok(new Application.Wrappers.Response<F5sVoucherDetail>(true, f5sVoucherDetail));
-                }
-                return Ok(gotItDetail);
-            }
-            return BadRequest();
+            return Ok(await Mediator.Send(new GetF5sVoucherQuery() { Id = id}));
         }
 
         [HttpPost("transaction")]

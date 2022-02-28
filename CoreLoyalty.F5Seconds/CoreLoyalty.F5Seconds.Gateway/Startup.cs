@@ -52,7 +52,7 @@ namespace CoreLoyalty.F5Seconds.Gateway
             services.AddApiVersioningExtension();
             services.AddHealthChecks();
             services.AddMemoryCache();
-            services.AddRabbitMqExtension(_config,_env);
+            services.AddRabbitMqExtension(_config, _env);
             services.AddScoped<IAuthenticatedUserService, AuthenticatedUserService>();
         }
 

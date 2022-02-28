@@ -29,10 +29,10 @@ namespace CoreLoyalty.F5Seconds.Gateway.Extensions
                 gotItUri = Environment.GetEnvironmentVariable("PARTNER_URI_GOTIT");
                 urboxUri = Environment.GetEnvironmentVariable("PARTNER_URI_URBOX");
             }
-            services.AddHttpClient<IGotItHttpClientService, GotItHttpClientRepository>(c => { 
+            services.AddHttpClient<IGotItHttpClientExternalService, GotItHttpClientExternalRepository>(c => { 
             c.BaseAddress = new Uri(gotItUri); 
             });
-            services.AddHttpClient<IUrboxHttpClientService, IUboxHttpClientRepository>(c => { 
+            services.AddHttpClient<IUrboxHttpClientExternalService, IUboxHttpClientExternalRepository>(c => { 
                 c.BaseAddress = new Uri(urboxUri); 
             });
         }

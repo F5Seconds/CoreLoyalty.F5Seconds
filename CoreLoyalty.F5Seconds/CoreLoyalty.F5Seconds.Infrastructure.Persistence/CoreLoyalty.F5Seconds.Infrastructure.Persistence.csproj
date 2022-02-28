@@ -6,10 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200627124316_Updates.cs" />
-    <Compile Remove="Migrations\20200627124316_Updates.Designer.cs" />
-    <Compile Remove="Migrations\20200724180907_New.cs" />
-    <Compile Remove="Migrations\20200724180907_New.Designer.cs" />
+    <Compile Remove="Migrations\**" />
+    <EmbeddedResource Remove="Migrations\**" />
+    <None Remove="Migrations\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,10 +26,6 @@
   <ItemGroup>
     <ProjectReference Include="..\CoreLoyalty.F5Seconds.Application\CoreLoyalty.F5Seconds.Application.csproj" />
     <ProjectReference Include="..\CoreLoyalty.F5Seconds.Domain\CoreLoyalty.F5Seconds.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

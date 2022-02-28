@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\**" />
+    <Content Remove="Models\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.0">
       <PrivateAssets>all</PrivateAssets>
@@ -22,10 +29,6 @@
     <ProjectReference Include="..\CoreLoyalty.F5Seconds.Infrastructure.Identity\CoreLoyalty.F5Seconds.Infrastructure.Identity.csproj" />
     <ProjectReference Include="..\CoreLoyalty.F5Seconds.Infrastructure.Persistence\CoreLoyalty.F5Seconds.Infrastructure.Persistence.csproj" />
     <ProjectReference Include="..\CoreLoyalty.F5Seconds.Infrastructure.Shared\CoreLoyalty.F5Seconds.Infrastructure.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>

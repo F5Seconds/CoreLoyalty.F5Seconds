@@ -1,8 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using CoreLoyalty.F5Seconds.Urbox.Interfaces;
+using CoreLoyalty.F5Seconds.Urbox.Repositories;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Ocelot.Configuration.File;
-using Ocelot.DependencyInjection;
 using System;
 using System.Collections.Generic;
 
@@ -10,12 +13,22 @@ namespace CoreLoyalty.F5Seconds.Urbox.Extensions
 {
     public static class ServiceExtensions
     {
-        public static void AddOcelotExtension(this IServiceCollection services, IConfiguration configuration)
+        public static void AddHttpClientExtension(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
         {
-            services.AddOcelot();
-            //https://stackoverflow.com/questions/63421563/environment-variable-in-ocelot-config-file
-            //services.ConfigureDownstreamHostAndPortsPlaceholders(configuration);
+            string uri = configuration["Urbox:Uri"];
+            string appId = configuration["Urbox:AppId"];
+            string appSecret = configuration["Urbox:AppSecret"];
+            if (env.IsProduction())
+            {
+                uri = Environment.GetEnvironmentVariable("URBOX_URI");
+                appId = Environment.GetEnvironmentVariable("URBOX_APPID");
+                appId = Environment.GetEnvironmentVariable("URBOX_APPID");
+            }
+            services.AddHttpClient<IUrboxHttpClientService, UrboxHttpClientRepository>(c => {
+                c.BaseAddress = new Uri($"{uri}");
+            });
         }
+
         public static void AddSwaggerExtension(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
@@ -60,41 +73,17 @@ namespace CoreLoyalty.F5Seconds.Urbox.Extensions
                 });
             });
         }
-
-        public static IServiceCollection ConfigureDownstreamHostAndPortsPlaceholders(this IServiceCollection services,IConfiguration configuration)
+        public static void AddApiVersioningExtension(this IServiceCollection services)
         {
-            services.PostConfigure<FileConfiguration>(fileConfiguration =>
+            services.AddApiVersioning(config =>
             {
-                var globalHosts = configuration
-                    .GetSection($"{nameof(FileConfiguration.GlobalConfiguration)}:Hosts")
-                    .Get<GlobalHosts>();
-
-                foreach (var route in fileConfiguration.Routes)
-                {
-                    ConfigureRote(route, globalHosts);
-                }
+                // Specify the default API Version as 1.0
+                config.DefaultApiVersion = new ApiVersion(1, 0);
+                // If the client hasn't specified the API version in the request, use the default API version number 
+                config.AssumeDefaultVersionWhenUnspecified = true;
+                // Advertise the API versions supported for the particular endpoint
+                config.ReportApiVersions = true;
             });
-
-            return services;
-        }
-
-        private static void ConfigureRote(FileRoute route, GlobalHosts globalHosts)
-        {
-            foreach (var hostAndPort in route.DownstreamHostAndPorts)
-            {
-                var host = hostAndPort.Host;
-                if (host.StartsWith("{") && host.EndsWith("}"))
-                {
-                    var placeHolder = host.TrimStart('{').TrimEnd('}');
-                    if (globalHosts.TryGetValue(placeHolder, out var uri))
-                    {
-                        route.DownstreamScheme = uri.Scheme;
-                        hostAndPort.Host = uri.Host;
-                        hostAndPort.Port = uri.Port;
-                    }
-                }
-            }
         }
     }
-    public class GlobalHosts : Dictionary<string, Uri> { }
 }

@@ -71,7 +71,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.HostedService
                 if (gotIt.Succeeded)
                 {
                     vouchers.InsertRange(0, gotIt.Data);
-                    vouchers.InsertRange(gotIt.Data.Count, urbox);
+                    vouchers.InsertRange(gotIt.Data.Count, urbox.Data);
                     var v = _mapper.Map<List<Product>>(vouchers);
                     Uri uri = new Uri($"rabbitmq://{rabbitHost}/{rabbitvHost}/{productSyncQueue}");
                     var endPoint = await _bus.GetSendEndpoint(uri);

@@ -28,10 +28,10 @@ namespace CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransact
         {
             private IMemoryCache _cache;
             public List<ProductMemory> products;
-            private readonly IUrboxHttpClientService _urboxClient;
-            private readonly IGotItHttpClientService _gotItClient;
+            private readonly IUrboxHttpClientExternalService _urboxClient;
+            private readonly IGotItHttpClientExternalService _gotItClient;
             private readonly IMapper _mapper;
-            public CreateTransactionCommandHandler(IMemoryCache cache, IUrboxHttpClientService urboxClient, IGotItHttpClientService gotItClient, IMapper mapper)
+            public CreateTransactionCommandHandler(IMemoryCache cache, IUrboxHttpClientExternalService urboxClient, IGotItHttpClientExternalService gotItClient, IMapper mapper)
             {
                 _cache = cache;
                 _urboxClient = urboxClient;

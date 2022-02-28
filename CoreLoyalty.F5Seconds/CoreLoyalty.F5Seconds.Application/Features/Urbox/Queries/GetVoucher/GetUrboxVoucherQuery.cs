@@ -12,9 +12,9 @@ namespace CoreLoyalty.F5Seconds.Application.Features.Urbox.Queries.GetVoucher
         public int Id { get; set; }
         public class GetVoucherQueryHandler : IRequestHandler<GetUrboxVoucherQuery, F5sVoucherBase>
         {
-            IUrboxHttpClientService _urboxHttpClientService;
+            IUrboxHttpClientExternalService _urboxHttpClientService;
             private readonly IMapper _mapper;
-            public GetVoucherQueryHandler(IUrboxHttpClientService urboxHttpClientService, IMapper mapper)
+            public GetVoucherQueryHandler(IUrboxHttpClientExternalService urboxHttpClientService, IMapper mapper)
             {
                 _urboxHttpClientService = urboxHttpClientService;
                 _mapper = mapper;   

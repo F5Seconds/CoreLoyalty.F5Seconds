@@ -13,9 +13,9 @@ namespace CoreLoyalty.F5Seconds.Application.Features.GotIt.Queries.GetVoucher
         public int Id { get; set; }
         public class GetGotItVoucherQueryHandler : IRequestHandler<GetGotItVoucherQuery, Response<F5sVoucherBase>>
         {
-            private readonly IGotItHttpClientService _gotItHttpClientService;
+            private readonly IGotItHttpClientExternalService _gotItHttpClientService;
             private readonly IMapper _mapper;
-            public GetGotItVoucherQueryHandler(IGotItHttpClientService gotItHttpClientService, IMapper mapper)
+            public GetGotItVoucherQueryHandler(IGotItHttpClientExternalService gotItHttpClientService, IMapper mapper)
             {
                 _gotItHttpClientService = gotItHttpClientService;
                 _mapper = mapper;

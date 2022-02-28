@@ -1,16 +1,20 @@
-﻿using CoreLoyalty.F5Seconds.Application.DTOs.Urox;
+﻿using CoreLoyalty.F5Seconds.Application.DTOs.F5seconds;
+using CoreLoyalty.F5Seconds.Application.DTOs.Urox;
 using CoreLoyalty.F5Seconds.Application.Interfaces.Urbox;
+using CoreLoyalty.F5Seconds.Application.Parameters;
+using CoreLoyalty.F5Seconds.Application.Wrappers;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories.Urbox
 {
-    public class IUboxHttpClientRepository : IUrboxHttpClientService
+    public class IUboxHttpClientExternalRepository : IUrboxHttpClientExternalService
     {
         private readonly HttpClient _client;
-        public IUboxHttpClientRepository(HttpClient client)
+        public IUboxHttpClientExternalRepository(HttpClient client)
         {
             _client = client;  
         }
@@ -27,26 +31,26 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories.Urbox
             return null;
         }
 
-        public async Task<UrboxVoucherDetailData> VoucherDetailAsync(int id)
+        public async Task<Response<F5sVoucherDetail>> VoucherDetailAsync(int id)
         {
-            var response = await _client.GetAsync($"/api/gift/detail/{id}");
+            var response = await _client.GetAsync($"{UriProductParameter.Detail}/{id}");
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<UrboxVoucherDetailData>(jsonString);
+                return JsonConvert.DeserializeObject<Response<F5sVoucherDetail>>(jsonString);
             }
-            return null;
+            return new Response<F5sVoucherDetail>(false, null, "Server Error");
         }
 
-        public async Task<UrboxVoucherList> VoucherListAsync()
+        public async Task<Response<List<F5sVoucherBase>>> VoucherListAsync()
         {
-            var response = await _client.GetAsync("/api/gift/lists");
+            var response = await _client.GetAsync(UriProductParameter.List);
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<UrboxVoucherList>(jsonString);
+                return JsonConvert.DeserializeObject<Response<List<F5sVoucherBase>>>(jsonString);
             }
-            return null;
+            return new Response<List<F5sVoucherBase>>(false, null, "Server Error");
         }
     }
 }

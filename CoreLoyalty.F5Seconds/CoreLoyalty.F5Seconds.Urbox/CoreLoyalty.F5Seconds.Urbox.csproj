@@ -5,9 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MMLib.SwaggerForOcelot" Version="4.8.0" />
-    <PackageReference Include="Ocelot" Version="17.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CoreLoyalty.F5Seconds.Application\CoreLoyalty.F5Seconds.Application.csproj" />
+    <ProjectReference Include="..\CoreLoyalty.F5Seconds.Infrastructure.Identity\CoreLoyalty.F5Seconds.Infrastructure.Identity.csproj" />
+    <ProjectReference Include="..\CoreLoyalty.F5Seconds.Infrastructure.Persistence\CoreLoyalty.F5Seconds.Infrastructure.Persistence.csproj" />
+    <ProjectReference Include="..\CoreLoyalty.F5Seconds.Infrastructure.Shared\CoreLoyalty.F5Seconds.Infrastructure.Shared.csproj" />
   </ItemGroup>
 
 </Project>
