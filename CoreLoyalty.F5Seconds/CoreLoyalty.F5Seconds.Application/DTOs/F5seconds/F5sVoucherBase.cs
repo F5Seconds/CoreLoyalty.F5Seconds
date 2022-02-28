@@ -47,4 +47,14 @@ namespace CoreLoyalty.F5Seconds.Application.DTOs.F5seconds
         public string customerId { get; set; }
         public string customerPhone { get; set; }
     }
+
+    public class F5sVoucherCode
+    {
+        public string transactionId { get; set; }
+        public string propductId { get; set; }
+        public float productPrice { get; set; }
+        public string customerPhone { get; set; }
+        public string voucherCode { get; set; }
+        public string expiryDate { get; set; }
+    }
 }

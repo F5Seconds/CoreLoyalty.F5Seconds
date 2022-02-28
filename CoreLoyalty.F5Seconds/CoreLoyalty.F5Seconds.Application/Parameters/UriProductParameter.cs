@@ -4,6 +4,6 @@
     {
         public static string List { get; set; } = "/api/v1/product/list";
         public static string Detail { get; set; } = "/api/v1/product/detail";
-        public string Transaction { get; set; } = "/api/v1/product/transaction";
+        public static string Transaction { get; set; } = "/api/v1/product/transaction";
     }
 }

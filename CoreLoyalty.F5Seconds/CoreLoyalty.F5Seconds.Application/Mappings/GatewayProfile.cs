@@ -8,6 +8,7 @@ using CoreLoyalty.F5Seconds.Domain.Entities;
 using CoreLoyalty.F5Seconds.Domain.MemoryModels;
 using System;
 using System.Text;
+using static CoreLoyalty.F5Seconds.Application.DTOs.GotIt.GotItBuyVoucherRes;
 
 namespace CoreLoyalty.F5Seconds.Application.Mappings
 {
@@ -61,6 +62,7 @@ namespace CoreLoyalty.F5Seconds.Application.Mappings
                 .ForMember(d => d.Created, m => m.MapFrom(s => DateTime.Now));
             CreateMap<Product, ProductMemory>();
             CreateMap<CreateTransactionCommand, UrboxBuyVoucherReq>()
+                .ForMember(d => d.productCode, m => m.MapFrom(s => s.propductId))
                 .ForMember(d => d.transaction_id, m => m.MapFrom(s => s.transactionId))
                 .ForMember(d => d.site_user_id, m => m.MapFrom(s => s.customerId))
                 .ForMember(d => d.ttphone, m => m.MapFrom(s => s.customerId));
@@ -68,6 +70,9 @@ namespace CoreLoyalty.F5Seconds.Application.Mappings
                 .ForMember(d => d.quantity, m => m.MapFrom(s => s.quantity))
                 .ForMember(d => d.phone, m => m.MapFrom(s => s.customerPhone))
                 .ForMember(d => d.voucherRefId, m => m.MapFrom(s => s.transactionId));
+            CreateMap<VoucherInfoRes, F5sVoucherCode>()
+                .ForMember(d => d.voucherCode, m => m.MapFrom(s => s.voucherCode))
+                .ForMember(d => d.expiryDate, m => m.MapFrom(s => s.expiryDate));
         }
         
     }

@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
-using CoreLoyalty.F5Seconds.Application.DTOs.F5seconds;
-using CoreLoyalty.F5Seconds.Application.Wrappers;
+using CoreLoyalty.F5Seconds.Application.DTOs.Urox;
 using CoreLoyalty.F5Seconds.Urbox.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
 
 namespace CoreLoyalty.F5Seconds.Urbox.Controllers.v1
@@ -38,10 +36,11 @@ namespace CoreLoyalty.F5Seconds.Urbox.Controllers.v1
             return Ok(voucher);
         }
 
-        //[HttpPost("transaction")]
-        //public async Task<IActionResult> PostTransaction(GotItBuyVoucherReq payload)
-        //{
-
-        //}
+        [HttpPost("transaction")]
+        public async Task<IActionResult> PostTransaction(UrboxBuyVoucherReq payload)
+        {
+            var code = await _urboxHttpClientService.BuyVoucherAsync(payload);
+            return Ok(code);    
+        }
     }
 }

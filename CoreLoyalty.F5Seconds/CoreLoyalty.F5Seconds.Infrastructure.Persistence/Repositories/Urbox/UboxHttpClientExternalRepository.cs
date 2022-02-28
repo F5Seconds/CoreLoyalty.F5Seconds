@@ -11,24 +11,24 @@ using System.Threading.Tasks;
 
 namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories.Urbox
 {
-    public class IUboxHttpClientExternalRepository : IUrboxHttpClientExternalService
+    public class UboxHttpClientExternalRepository : IUrboxHttpClientExternalService
     {
         private readonly HttpClient _client;
-        public IUboxHttpClientExternalRepository(HttpClient client)
+        public UboxHttpClientExternalRepository(HttpClient client)
         {
             _client = client;  
         }
 
-        public async Task<UrboxBuyVocherRes> BuyVoucherAsync(UrboxBuyVoucherReq voucher)
+        public async Task<Response<List<F5sVoucherCode>>> BuyVoucherAsync(UrboxBuyVoucherReq voucher)
         {
             var content = new StringContent(JsonConvert.SerializeObject(voucher), Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync("/api/pay", content);
+            var response = await _client.PostAsync(UriProductParameter.Transaction, content);
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<UrboxBuyVocherRes>(jsonString);
+                return JsonConvert.DeserializeObject<Response<List<F5sVoucherCode>>>(jsonString);
             }
-            return null;
+            return new Response<List<F5sVoucherCode>>(false, null, "Server Error");
         }
 
         public async Task<Response<F5sVoucherDetail>> VoucherDetailAsync(int id)

@@ -8,6 +8,8 @@ namespace CoreLoyalty.F5Seconds.Application.DTOs.GotIt
     {
         public string refId { get; set; }
         public string invoiceNo { get; set; }
+        public string productCode { get; set; }
+        public float productPrice { get; set; }
         public List<VoucherInfoRes> vouchers { get; set; }
         public class VoucherInfoRes
         {
@@ -45,6 +47,8 @@ namespace CoreLoyalty.F5Seconds.Application.DTOs.GotIt
     {
         public int productId { get; set; }
         public int productPriceId { get; set; }
+        public string productCode { get; set; }
+        public float productPrice { get; set; }
         public int quantity { get; set; }
         public string campaignNm { get; set; } = "F5Seconds Campaign";
         public string expiryDate { get; set; } = DateTime.Now.AddMonths(3).ToString("yyyy-MM-dd");

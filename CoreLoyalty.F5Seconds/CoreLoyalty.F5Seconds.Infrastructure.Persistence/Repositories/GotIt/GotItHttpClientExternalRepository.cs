@@ -23,20 +23,18 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories.GotIt
             _logger = logger;
         }
 
-        public async Task<Response<List<GotItBuyVoucherRes>>> BuyVoucherAsync(GotItBuyVoucherReq voucher)
+        public async Task<Response<List<F5sVoucherCode>>> BuyVoucherAsync(GotItBuyVoucherReq voucher)
         {
             var content = new StringContent(JsonConvert.SerializeObject(voucher), Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync("/api/transaction", content);
+            var response = await _client.PostAsync(UriProductParameter.Transaction, content);
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
-                if (Helpers.TryParseJsonConvert(jsonString,out GotItErrorMessage error))
-                {
-                    return new Response<List<GotItBuyVoucherRes>>(false,null, error.code,new List<string> { error.msg });
-                }
-                return new Response<List<GotItBuyVoucherRes>>(true,JsonConvert.DeserializeObject<List<GotItBuyVoucherRes>>(jsonString));
+                var result = JsonConvert.DeserializeObject<ResponseBase>(jsonString);
+                if (result.Succeeded) return JsonConvert.DeserializeObject<Response<List<F5sVoucherCode>>>(jsonString);
+                return new Response<List<F5sVoucherCode>>(false,null,result.Message,result.Errors);
             }
-            return new Response<List<GotItBuyVoucherRes>>(false,null,"Server Error");
+            return new Response<List<F5sVoucherCode>>(false,null, "Server Error");
         }
 
         public async Task<Response<F5sVoucherDetail>> VoucherDetailAsync(int id)

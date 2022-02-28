@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using static CoreLoyalty.F5Seconds.Application.DTOs.GotIt.GotItBuyVoucherRes;
 
 namespace CoreLoyalty.F5Seconds.GotIt.Repositories
 {
@@ -21,7 +22,7 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
             _client = client;
             _mapper = mapper;
         }
-        public async Task<Response<List<GotItBuyVoucherRes>>> BuyVoucherAsync(GotItBuyVoucherReq voucher)
+        public async Task<Response<List<F5sVoucherCode>>> BuyVoucherAsync(GotItBuyVoucherReq voucher)
         {
             var content = new StringContent(JsonConvert.SerializeObject(voucher), Encoding.UTF8, "application/json");
             var response = await _client.PostAsync("/api/transaction", content);
@@ -30,11 +31,38 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
                 var jsonString = await response.Content.ReadAsStringAsync();
                 if (Helpers.TryParseJsonConvert(jsonString, out GotItErrorMessage error))
                 {
-                    return new Response<List<GotItBuyVoucherRes>>(false, null, error.code, new List<string> { error.msg });
+                    return new Response<List<F5sVoucherCode>>(false, null, error.code, new List<string> { error.msg });
                 }
-                return new Response<List<GotItBuyVoucherRes>>(true, JsonConvert.DeserializeObject<List<GotItBuyVoucherRes>>(jsonString));
+                var resultV = JsonConvert.DeserializeObject<List<GotItBuyVoucherRes>>(jsonString);
+                List<VoucherInfoRes> vRes = new List<VoucherInfoRes>();
+                foreach (var i in resultV)
+                {
+                    foreach (var v in i.vouchers)
+                    {
+                        vRes.Add(v);
+                    }
+                }
+                return new Response<List<F5sVoucherCode>>(true,FormatVoucherCode(voucher,vRes));
             }
-            return new Response<List<GotItBuyVoucherRes>>(false, null, "Server Error");
+            return new Response<List<F5sVoucherCode>>(false, null, "Server Error");
+        }
+
+        private List<F5sVoucherCode> FormatVoucherCode(GotItBuyVoucherReq vReq, List<VoucherInfoRes> vRes)
+        {
+            List<F5sVoucherCode> f5SVoucherCodes = new List<F5sVoucherCode>();
+            foreach (var v in vRes)
+            {
+                f5SVoucherCodes.Add(new F5sVoucherCode()
+                {
+                    customerPhone = vReq.phone,
+                    expiryDate = vReq.expiryDate,
+                    transactionId = vReq.voucherRefId,
+                    voucherCode = v.voucherCode,
+                    propductId = vReq.productCode,
+                    productPrice = vReq.productPrice
+                });
+            }
+            return f5SVoucherCodes;
         }
 
         public async Task<Response<F5sVoucherDetail>> VoucherDetailAsync(int id)

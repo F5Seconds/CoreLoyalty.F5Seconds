@@ -10,6 +10,6 @@ namespace CoreLoyalty.F5Seconds.Application.Interfaces.Urbox
     {
         Task<Response<List<F5sVoucherBase>>> VoucherListAsync();
         Task<Response<F5sVoucherDetail>> VoucherDetailAsync(int id);
-        Task<UrboxBuyVocherRes> BuyVoucherAsync(UrboxBuyVoucherReq voucher);
+        Task<Response<List<F5sVoucherCode>>> BuyVoucherAsync(UrboxBuyVoucherReq voucher);
     }
 }

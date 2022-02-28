@@ -46,23 +46,29 @@ namespace CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransact
                 if(p is null) return new Response<object>(false, "No data found");
                 if (p.Partner.Equals("URBOX"))
                 {
-                    var urboxBuyInfo = _mapper.Map<UrboxBuyVoucherReq>(request,opt => opt.AfterMap((s,d) => d.dataBuy = new List<UrboxBuyVoucherReq.UrboxBuyVoucherItem>()));
+                    var urboxBuyInfo = _mapper.Map<UrboxBuyVoucherReq>(request, opt => opt.AfterMap((s, d) => { 
+                        d.productPrice = p.Price;
+                        d.dataBuy = new List<UrboxBuyVoucherReq.UrboxBuyVoucherItem>(); 
+                    }));
                     urboxBuyInfo.dataBuy.Add(new UrboxBuyVoucherReq.UrboxBuyVoucherItem()
                     {
                         priceId = p.ProductId,
                         quantity = request.quantity
                     });
                     var urboxBuy = await _urboxClient.BuyVoucherAsync(urboxBuyInfo);
-                    if(urboxBuy is null) return new Response<object>(false, "Bad request");
-                    return new Response<object>(true,urboxBuy);
+                    if(!urboxBuy.Succeeded) return new Response<object>(false, null,urboxBuy.Message,urboxBuy.Errors);
+                    return new Response<object>(true,urboxBuy.Data);
                 }
                 if (p.Partner.Equals("GOTIT"))
                 {
                     var gotItBuyInfo = _mapper.Map<GotItBuyVoucherReq>(request, opt => opt.AfterMap((s, d) => {
                         d.productId = p.ProductId;
-                        d.productPriceId = p.Size; 
+                        d.productPriceId = p.Size;
+                        d.productCode = p.Code;
+                        d.productPrice = p.Price;
                     }));
                     var gotItBuy = await _gotItClient.BuyVoucherAsync(gotItBuyInfo);
+
                     if (gotItBuy.Succeeded)
                     {
                         return new Response<object>(true, gotItBuy.Data);

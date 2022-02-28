@@ -3,6 +3,7 @@ using CoreLoyalty.F5Seconds.Application.Wrappers;
 using CoreLoyalty.F5Seconds.GotIt.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
 
 namespace CoreLoyalty.F5Seconds.GotIt.Controllers.v1
@@ -35,11 +36,7 @@ namespace CoreLoyalty.F5Seconds.GotIt.Controllers.v1
         public async Task<IActionResult> PostTransaction(GotItBuyVoucherReq payload)
         {
             var gotItBuy = await _gotItHttpClientService.BuyVoucherAsync(payload);
-            if (gotItBuy.Succeeded)
-            {
-                return Ok(new Response<object>(true, gotItBuy.Data));
-            }
-            return Ok(new Response<object>(false, null, gotItBuy.Message, gotItBuy.Errors));
+            return Ok(gotItBuy);
         }
     }
 }

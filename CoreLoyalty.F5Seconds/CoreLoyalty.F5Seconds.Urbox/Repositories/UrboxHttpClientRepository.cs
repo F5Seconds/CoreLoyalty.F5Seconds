@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using static CoreLoyalty.F5Seconds.Application.DTOs.Urox.UrboxBuyVocherRes.UrboxBuyVocherResData.UrboxBuyVoucherResCart;
 
 namespace CoreLoyalty.F5Seconds.Urbox.Repositories
 {
@@ -23,16 +24,37 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
             _config = config;
             _mapper = mapper;
         }
-        public async Task<Response<UrboxBuyVocherRes>> BuyVoucherAsync(UrboxBuyVoucherReq voucher)
+        public async Task<Response<List<F5sVoucherCode>>> BuyVoucherAsync(UrboxBuyVoucherReq voucher)
         {
             var content = new StringContent(JsonConvert.SerializeObject(voucher), Encoding.UTF8, "application/json");
             var response = await _client.PostAsync($"/2.0/cart/cartPayVoucher?app_id={_config["Urbox:AppId"]}&app_secret={_config["Urbox:AppSecret"]}", content);
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
-                return new Response<UrboxBuyVocherRes>(true,JsonConvert.DeserializeObject<UrboxBuyVocherRes>(jsonString));
+                var result = JsonConvert.DeserializeObject<UrboxMessageBase>(jsonString);
+                if(result is not null && result.done.Equals(0)) return new Response<List<F5sVoucherCode>>(false,null,result.msg);
+                var resultV = JsonConvert.DeserializeObject<UrboxBuyVocherRes>(jsonString);
+                return new Response<List<F5sVoucherCode>>(true,FormatVoucherCode(voucher,resultV.data.cart.code_link_gift));
             }
-            return new Response<UrboxBuyVocherRes>(false,null, "Server Error");
+            return new Response<List<F5sVoucherCode>>(false,null, "Server Error");
+        }
+
+        private List<F5sVoucherCode> FormatVoucherCode(UrboxBuyVoucherReq vReq,List<UrboxBuyVoucherResCode> vRes)
+        {
+            List<F5sVoucherCode> f5SVoucherCodes = new List<F5sVoucherCode>();
+            foreach (var v in vRes)
+            {
+                f5SVoucherCodes.Add(new F5sVoucherCode()
+                {
+                    customerPhone = vReq.ttphone,
+                    expiryDate = v.expired,
+                    productPrice = vReq.productPrice,
+                    propductId = vReq.productCode,
+                    transactionId = vReq.transaction_id,
+                    voucherCode = v.code
+                });
+            }
+            return f5SVoucherCodes;
         }
 
         public async Task<Response<F5sVoucherDetail>> VoucherDetailAsync(int id)

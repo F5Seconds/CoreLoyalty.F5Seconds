@@ -32,7 +32,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Extensions
             services.AddHttpClient<IGotItHttpClientExternalService, GotItHttpClientExternalRepository>(c => { 
             c.BaseAddress = new Uri(gotItUri); 
             });
-            services.AddHttpClient<IUrboxHttpClientExternalService, IUboxHttpClientExternalRepository>(c => { 
+            services.AddHttpClient<IUrboxHttpClientExternalService, UboxHttpClientExternalRepository>(c => { 
                 c.BaseAddress = new Uri(urboxUri); 
             });
         }
