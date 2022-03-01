@@ -67,6 +67,7 @@ namespace CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransact
                 {
                     var urboxBuyInfo = _mapper.Map<UrboxBuyVoucherReq>(request, opt => opt.AfterMap((s, d) => { 
                         d.productPrice = p.Price;
+                        d.productCode = p.Code;
                         d.dataBuy = new List<UrboxBuyVoucherReq.UrboxBuyVoucherItem>(); 
                     }));
                     urboxBuyInfo.dataBuy.Add(new UrboxBuyVoucherReq.UrboxBuyVoucherItem()

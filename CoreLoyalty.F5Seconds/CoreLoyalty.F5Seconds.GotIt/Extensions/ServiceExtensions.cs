@@ -50,9 +50,9 @@ namespace CoreLoyalty.F5Seconds.GotIt.Extensions
             string rabbitvHost = configuration["RabbitMqSettings:vHost"];
             string rabbitUser = configuration["RabbitMqSettings:Username"];
             string rabbitPass = configuration["RabbitMqSettings:Password"];
-            string rabbitTransRequestSync = configuration["RabbitMqSettings:transactionRequestQueue"];
-            string rabbitTransResponseSync = configuration["RabbitMqSettings:transactionResponseQueue"];
-            
+            string rabbitTransReqQueue = configuration["RabbitMqSettings:transactionRequestQueue"];
+            string rabbitTransResQueue = configuration["RabbitMqSettings:transactionResponseQueue"];
+            string rabbitTransResFailQueue = configuration["RabbitMqSettings:rabbitTransResFailQueue"];
 
             if (env.IsProduction())
             {
@@ -60,14 +60,16 @@ namespace CoreLoyalty.F5Seconds.GotIt.Extensions
                 rabbitvHost = Environment.GetEnvironmentVariable("RABBITMQ_VHOST");
                 rabbitUser = Environment.GetEnvironmentVariable("RABBITMQ_USER");
                 rabbitPass = Environment.GetEnvironmentVariable("RABBITMQ_PASS");
-                rabbitTransRequestSync = Environment.GetEnvironmentVariable("RABBITMQ_TRANSREQUEST");
-                rabbitTransResponseSync = Environment.GetEnvironmentVariable("RABBITMQ_TRANSRESPONSE");
+                rabbitTransReqQueue = Environment.GetEnvironmentVariable("RABBITMQ_TRANS_REQUEST");
+                rabbitTransResQueue = Environment.GetEnvironmentVariable("RABBITMQ_TRANS_RES_SUCCESS");
+                rabbitTransResFailQueue = Environment.GetEnvironmentVariable("RABBITMQ_TRANS_RES_FAIL");
             }
 
             services.AddMassTransit(x =>
             {
                 x.AddConsumer<TransactionRequestConsumer>();
                 x.AddConsumer<TransactionResponseConsumer>();
+                x.AddConsumer<TransactionResponseFailConsumer>();
                 x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
                 {
                     config.Host(rabbitHost, rabbitvHost, h =>
@@ -75,17 +77,23 @@ namespace CoreLoyalty.F5Seconds.GotIt.Extensions
                         h.Username(rabbitUser);
                         h.Password(rabbitPass);
                     });
-                    config.ReceiveEndpoint(rabbitTransRequestSync, ep =>
+                    config.ReceiveEndpoint(rabbitTransReqQueue, ep =>
                     {
                         ep.PrefetchCount = 16;
                         ep.UseMessageRetry(r => r.Interval(2, 100));
                         ep.ConfigureConsumer<TransactionRequestConsumer>(provider);
                     });
-                    config.ReceiveEndpoint(rabbitTransResponseSync, ep =>
+                    config.ReceiveEndpoint(rabbitTransResQueue, ep =>
                     {
                         ep.PrefetchCount = 16;
                         ep.UseMessageRetry(r => r.Interval(2, 100));
                         ep.ConfigureConsumer<TransactionResponseConsumer>(provider);
+                    });
+                    config.ReceiveEndpoint(rabbitTransResFailQueue, ep =>
+                    {
+                        ep.PrefetchCount = 16;
+                        ep.UseMessageRetry(r => r.Interval(2, 100));
+                        ep.ConfigureConsumer<TransactionResponseFailConsumer>(provider);
                     });
                 }));
             });

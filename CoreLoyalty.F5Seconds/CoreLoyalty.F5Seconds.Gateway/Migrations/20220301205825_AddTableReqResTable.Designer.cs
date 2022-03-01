@@ -3,14 +3,16 @@ using System;
 using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220301205825_AddTableReqResTable")]
+    partial class AddTableReqResTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,7 +75,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.TransactionRequest", b =>
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.TransactionReq", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -155,7 +157,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.ToTable("TransactionResFails");
                 });
 
-            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.TransactionResponse", b =>
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.TransactionResSuccess", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

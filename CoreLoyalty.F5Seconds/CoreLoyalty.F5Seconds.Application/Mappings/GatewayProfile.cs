@@ -84,6 +84,13 @@ namespace CoreLoyalty.F5Seconds.Application.Mappings
                 .ForMember(d => d.VoucherCode, m => m.MapFrom(s => s.voucherCode))
                 .ForMember(d => d.CustomerPhone, m => m.MapFrom(s => s.customerPhone))
                 .ForMember(d => d.Created, m => m.MapFrom(s => DateTime.Now));
+            CreateMap<GotItBuyVoucherReq, TransactionRequest>()
+                .ForMember(d => d.TransactionId, m => m.MapFrom(s => s.voucherRefId))
+                .ForMember(d => d.CustomerPhone, m => m.MapFrom(s => s.phone))
+                .ForMember(d => d.PropductId, m => m.MapFrom(s => s.productCode))
+                .ForMember(d => d.Quantity, m => m.MapFrom(s => s.quantity))
+                .ForMember(d => d.Created, m => m.MapFrom(s => DateTime.Now));
+
         }
         
     }

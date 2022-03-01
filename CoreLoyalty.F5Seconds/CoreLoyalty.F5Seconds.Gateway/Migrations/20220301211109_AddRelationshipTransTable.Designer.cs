@@ -3,14 +3,16 @@ using System;
 using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220301211109_AddRelationshipTransTable")]
+    partial class AddRelationshipTransTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,7 +114,17 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("TransactionId")
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("TransactionResFailId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TransactionResponseId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TransactionResFailId");
+
+                    b.HasIndex("TransactionResponseId");
 
                     b.ToTable("TransactionRequests");
                 });
@@ -194,6 +206,21 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TransactionResponses");
+                });
+
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.TransactionRequest", b =>
+                {
+                    b.HasOne("CoreLoyalty.F5Seconds.Domain.Entities.TransactionResFail", "TransactionResFail")
+                        .WithMany()
+                        .HasForeignKey("TransactionResFailId");
+
+                    b.HasOne("CoreLoyalty.F5Seconds.Domain.Entities.TransactionResponse", "TransactionResponse")
+                        .WithMany()
+                        .HasForeignKey("TransactionResponseId");
+
+                    b.Navigation("TransactionResFail");
+
+                    b.Navigation("TransactionResponse");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,5 @@
 ﻿using CoreLoyalty.F5Seconds.Domain.Common;
+using System.Collections.Generic;
 
 namespace CoreLoyalty.F5Seconds.Domain.Entities
 {
@@ -9,5 +10,7 @@ namespace CoreLoyalty.F5Seconds.Domain.Entities
         public string TransactionId { get; set; }
         public string CustomerId { get; set; }
         public string CustomerPhone { get; set; }
+        public string Partner { get; set; }
+        public int Status { get; set; }
     }
 }

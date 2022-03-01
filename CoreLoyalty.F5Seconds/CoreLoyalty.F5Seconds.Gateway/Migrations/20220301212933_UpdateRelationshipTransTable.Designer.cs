@@ -3,14 +3,16 @@ using System;
 using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220301212933_UpdateRelationshipTransTable")]
+    partial class UpdateRelationshipTransTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -150,7 +152,12 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("TransactionId")
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("TransactionRequestId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TransactionRequestId");
 
                     b.ToTable("TransactionResFails");
                 });
@@ -188,12 +195,35 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("TransactionId")
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("TransactionRequestId")
+                        .HasColumnType("int");
+
                     b.Property<string>("VoucherCode")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("TransactionRequestId");
+
                     b.ToTable("TransactionResponses");
+                });
+
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.TransactionResFail", b =>
+                {
+                    b.HasOne("CoreLoyalty.F5Seconds.Domain.Entities.TransactionRequest", "TransactionRequest")
+                        .WithMany()
+                        .HasForeignKey("TransactionRequestId");
+
+                    b.Navigation("TransactionRequest");
+                });
+
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.TransactionResponse", b =>
+                {
+                    b.HasOne("CoreLoyalty.F5Seconds.Domain.Entities.TransactionRequest", "TransactionRequest")
+                        .WithMany()
+                        .HasForeignKey("TransactionRequestId");
+
+                    b.Navigation("TransactionRequest");
                 });
 #pragma warning restore 612, 618
         }
