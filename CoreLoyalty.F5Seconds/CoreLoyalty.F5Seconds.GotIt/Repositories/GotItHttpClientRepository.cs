@@ -4,6 +4,7 @@ using CoreLoyalty.F5Seconds.Application.DTOs.F5seconds;
 using CoreLoyalty.F5Seconds.Application.DTOs.GotIt;
 using CoreLoyalty.F5Seconds.Application.Wrappers;
 using CoreLoyalty.F5Seconds.GotIt.Interfaces;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -17,10 +18,12 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
     {
         private readonly HttpClient _client;
         private readonly IMapper _mapper;
-        public GotItHttpClientRepository(HttpClient client, IMapper mapper)
+        private readonly ILogger<GotItHttpClientRepository> _logger;
+        public GotItHttpClientRepository(HttpClient client, IMapper mapper, ILogger<GotItHttpClientRepository> logger)
         {
             _client = client;
             _mapper = mapper;
+            _logger = logger;
         }
         public async Task<Response<List<F5sVoucherCode>>> BuyVoucherAsync(GotItBuyVoucherReq voucher)
         {
@@ -29,6 +32,7 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
+                _logger.LogInformation(jsonString);
                 if (Helpers.TryParseJsonConvert(jsonString, out GotItErrorMessage error))
                 {
                     return new Response<List<F5sVoucherCode>>(false, null, error.code, new List<string> { error.msg });
@@ -44,7 +48,8 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
                 }
                 return new Response<List<F5sVoucherCode>>(true,FormatVoucherCode(voucher,vRes));
             }
-            return new Response<List<F5sVoucherCode>>(false, null, "Server Error");
+            var errorStr = await response.Content.ReadAsStringAsync();
+            return new Response<List<F5sVoucherCode>>(false, null, $"{response.StatusCode} - {errorStr}");
         }
 
         private List<F5sVoucherCode> FormatVoucherCode(GotItBuyVoucherReq vReq, List<VoucherInfoRes> vRes)

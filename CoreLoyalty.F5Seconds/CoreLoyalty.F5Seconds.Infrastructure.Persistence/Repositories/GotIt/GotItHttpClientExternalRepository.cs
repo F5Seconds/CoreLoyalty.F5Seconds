@@ -34,7 +34,7 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories.GotIt
                 if (result.Succeeded) return JsonConvert.DeserializeObject<Response<List<F5sVoucherCode>>>(jsonString);
                 return new Response<List<F5sVoucherCode>>(false,null,result.Message,result.Errors);
             }
-            return new Response<List<F5sVoucherCode>>(false,null, "Server Error");
+            return new Response<List<F5sVoucherCode>>(false,null, "Server Error FROM GotItHttpClientExternalRepository");
         }
 
         public async Task<Response<F5sVoucherDetail>> VoucherDetailAsync(int id)

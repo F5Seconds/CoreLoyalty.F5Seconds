@@ -1,5 +1,8 @@
-﻿using CoreLoyalty.F5Seconds.Urbox.Interfaces;
+﻿using CoreLoyalty.F5Seconds.Infrastructure.Shared.RabbitMq.Consumer;
+using CoreLoyalty.F5Seconds.Urbox.Interfaces;
 using CoreLoyalty.F5Seconds.Urbox.Repositories;
+using GreenPipes;
+using MassTransit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -84,6 +87,54 @@ namespace CoreLoyalty.F5Seconds.Urbox.Extensions
                 // Advertise the API versions supported for the particular endpoint
                 config.ReportApiVersions = true;
             });
+        }
+
+        public static void AddRabbitMqExtension(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
+        {
+            string rabbitHost = configuration["RabbitMqSettings:Host"];
+            string rabbitvHost = configuration["RabbitMqSettings:vHost"];
+            string rabbitUser = configuration["RabbitMqSettings:Username"];
+            string rabbitPass = configuration["RabbitMqSettings:Password"];
+            string rabbitTransRequestSync = configuration["RabbitMqSettings:transactionRequestQueue"];
+            string rabbitTransResponseSync = configuration["RabbitMqSettings:transactionResponseQueue"];
+
+
+            if (env.IsProduction())
+            {
+                rabbitHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST");
+                rabbitvHost = Environment.GetEnvironmentVariable("RABBITMQ_VHOST");
+                rabbitUser = Environment.GetEnvironmentVariable("RABBITMQ_USER");
+                rabbitPass = Environment.GetEnvironmentVariable("RABBITMQ_PASS");
+                rabbitTransRequestSync = Environment.GetEnvironmentVariable("RABBITMQ_TRANSREQUEST");
+                rabbitTransResponseSync = Environment.GetEnvironmentVariable("RABBITMQ_TRANSRESPONSE");
+            }
+
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumer<TransactionRequestConsumer>();
+                x.AddConsumer<TransactionResponseConsumer>();
+                x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
+                {
+                    config.Host(rabbitHost, rabbitvHost, h =>
+                    {
+                        h.Username(rabbitUser);
+                        h.Password(rabbitPass);
+                    });
+                    config.ReceiveEndpoint(rabbitTransRequestSync, ep =>
+                    {
+                        ep.PrefetchCount = 16;
+                        ep.UseMessageRetry(r => r.Interval(2, 100));
+                        ep.ConfigureConsumer<TransactionRequestConsumer>(provider);
+                    });
+                    config.ReceiveEndpoint(rabbitTransResponseSync, ep =>
+                    {
+                        ep.PrefetchCount = 16;
+                        ep.UseMessageRetry(r => r.Interval(2, 100));
+                        ep.ConfigureConsumer<TransactionResponseConsumer>(provider);
+                    });
+                }));
+            });
+            services.AddMassTransitHostedService();
         }
     }
 }

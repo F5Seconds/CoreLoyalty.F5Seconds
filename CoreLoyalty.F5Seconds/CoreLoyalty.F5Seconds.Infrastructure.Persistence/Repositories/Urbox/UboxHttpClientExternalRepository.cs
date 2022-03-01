@@ -28,7 +28,7 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories.Urbox
                 var jsonString = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<Response<List<F5sVoucherCode>>>(jsonString);
             }
-            return new Response<List<F5sVoucherCode>>(false, null, "Server Error");
+            return new Response<List<F5sVoucherCode>>(false, null, "Server Error FROM UboxHttpClientExternalRepository");
         }
 
         public async Task<Response<F5sVoucherDetail>> VoucherDetailAsync(int id)

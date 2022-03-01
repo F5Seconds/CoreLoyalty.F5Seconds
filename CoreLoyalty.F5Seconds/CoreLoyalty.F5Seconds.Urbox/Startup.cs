@@ -1,5 +1,10 @@
 using AutoMapper;
+using CoreLoyalty.F5Seconds.Application.Interfaces;
+using CoreLoyalty.F5Seconds.Infrastructure.Identity;
+using CoreLoyalty.F5Seconds.Infrastructure.Persistence;
+using CoreLoyalty.F5Seconds.Infrastructure.Shared;
 using CoreLoyalty.F5Seconds.Urbox.Extensions;
+using CoreLoyalty.F5Seconds.Urbox.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -31,11 +36,16 @@ namespace CoreLoyalty.F5Seconds.Urbox
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddPersistenceInfrastructure(_config, _env.IsProduction());
+            services.AddIdentityInfrastructure(_config, _env);
+            services.AddSharedInfrastructure(_config);
             services.AddAutoMapper(typeof(Application.Mappings.GatewayProfile));
             services.AddHttpClientExtension(_config, _env);
+            services.AddRabbitMqExtension(_config, _env);
             services.AddSwaggerExtension();
             services.AddApiVersioningExtension();
             services.AddControllers();
+            services.AddScoped<IAuthenticatedUserService, AuthenticatedUserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

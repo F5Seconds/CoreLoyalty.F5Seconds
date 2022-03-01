@@ -22,10 +22,10 @@ namespace CoreLoyalty.F5Seconds.Application.DTOs.GotIt
             public VoucherProductInfoRes product { get; set; }
             public class VoucherProductInfoRes
             {
-                public int productId { get; set; }
+                public int? productId { get; set; }
                 public string productNm { get; set; }
                 public string productImg { get; set; }
-                public int brandId { get; set; }
+                public int? brandId { get; set; }
                 public string brandNm { get; set; }
                 public string brandServiceGuide { get; set; }
                 public string link { get; set; }
@@ -35,9 +35,9 @@ namespace CoreLoyalty.F5Seconds.Application.DTOs.GotIt
                 public VoucherSizeInfoRes size { get; set; }
                 public class VoucherSizeInfoRes
                 {
-                    public int sizeId { get; set; }
-                    public int priceNm { get; set; }
-                    public float pricePrice { get; set; }
+                    public int? sizeId { get; set; }
+                    public string priceNm { get; set; }
+                    public float? pricePrice { get; set; }
                 }
             }
         }
