@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 
 namespace CoreLoyalty.F5Seconds.Infrastructure.Shared.RabbitMq.Consumer
 {
-    public class TransactionRequestConsumer : IConsumer<TransactionRequest>
+    public class TransactionRequestConsumer : IConsumer<GotItTransactionRequest>
     {
-        private ITransactionRequestRepositoryAsync _transactionRequest;
-        public TransactionRequestConsumer(ITransactionRequestRepositoryAsync transactionRequest)
+        private IGotItTransReqRepositoryAsync _transactionRequest;
+        public TransactionRequestConsumer(IGotItTransReqRepositoryAsync transactionRequest)
         {
             _transactionRequest = transactionRequest;   
         }
 
-        public async Task Consume(ConsumeContext<TransactionRequest> context)
+        public async Task Consume(ConsumeContext<GotItTransactionRequest> context)
         {
             await _transactionRequest.AddAsync(context.Message);
         }

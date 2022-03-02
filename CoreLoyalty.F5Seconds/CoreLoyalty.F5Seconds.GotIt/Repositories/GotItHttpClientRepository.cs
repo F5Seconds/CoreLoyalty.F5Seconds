@@ -2,11 +2,16 @@
 using CoreLoyalty.F5Seconds.Application.Common;
 using CoreLoyalty.F5Seconds.Application.DTOs.F5seconds;
 using CoreLoyalty.F5Seconds.Application.DTOs.GotIt;
-using CoreLoyalty.F5Seconds.Application.Wrappers;
+using CoreLoyalty.F5Seconds.Domain.Entities;
 using CoreLoyalty.F5Seconds.GotIt.Interfaces;
+using CoreLoyalty.F5Seconds.Infrastructure.Shared.Const;
 using MassTransit;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
@@ -21,23 +26,48 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
         private readonly IMapper _mapper;
         private readonly ILogger<GotItHttpClientRepository> _logger;
         private readonly IBus _bus;
-        public GotItHttpClientRepository(HttpClient client, IMapper mapper, ILogger<GotItHttpClientRepository> logger, IBus bus)
+        private readonly IConfiguration _config;
+        private readonly IWebHostEnvironment _env;
+        private string Partner = "GOTIT";
+        public GotItHttpClientRepository(
+            HttpClient client, 
+            IMapper mapper, 
+            ILogger<GotItHttpClientRepository> logger, 
+            IBus bus, 
+            IConfiguration config, 
+            IWebHostEnvironment env)
         {
             _client = client;
             _mapper = mapper;
             _logger = logger;
             _bus = bus;
+            _config = config;
+            _env = env;
         }
         public async Task<Application.Wrappers.Response<List<F5sVoucherCode>>> BuyVoucherAsync(GotItBuyVoucherReq voucher)
         {
+            var transReq = _mapper.Map<GotItTransactionRequest>(voucher, opt => opt.AfterMap((s, d) => d.Partner = Partner));
+            var requestEndpoint = await _bus.GetSendEndpoint(RabbitMqConst.FormatUriRabbitMq(1, _env.IsProduction(), _config));
+            var resSuccessEndpoint = await _bus.GetSendEndpoint(RabbitMqConst.FormatUriRabbitMq(2, _env.IsProduction(), _config));
+            var resFailEndpoint = await _bus.GetSendEndpoint(RabbitMqConst.FormatUriRabbitMq(3, _env.IsProduction(), _config));
             var content = new StringContent(JsonConvert.SerializeObject(voucher), Encoding.UTF8, "application/json");
             var response = await _client.PostAsync("/api/transaction", content);
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation(jsonString);
                 if (Helpers.TryParseJsonConvert(jsonString, out GotItErrorMessage error))
                 {
+                    transReq.Status = 0;
+                    await requestEndpoint.Send(transReq);
+                    await resFailEndpoint.Send(new GotItTransactionResFail()
+                    {
+                        Code = error.code,
+                        Message = error.msg,
+                        Partner = Partner,
+                        TransactionId = transReq.TransactionId,
+                        ProductId = transReq.PropductId,
+                        Created = DateTime.Now
+                    });
                     return new Application.Wrappers.Response<List<F5sVoucherCode>>(false, null, error.code, new List<string> { error.msg });
                 }
                 var resultV = JsonConvert.DeserializeObject<List<GotItBuyVoucherRes>>(jsonString);
@@ -49,13 +79,27 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
                         vRes.Add(v);
                     }
                 }
-                return new Application.Wrappers.Response<List<F5sVoucherCode>>(true,FormatVoucherCode(voucher,vRes));
+                transReq.Status = 1;
+                await requestEndpoint.Send(transReq);
+                return new Application.Wrappers.Response<List<F5sVoucherCode>>(true,FormatVoucherCode(voucher,vRes, resSuccessEndpoint));
             }
+            transReq.Status = -1;
+            await requestEndpoint.Send(transReq);
             var errorStr = await response.Content.ReadAsStringAsync();
-            return new Application.Wrappers.Response<List<F5sVoucherCode>>(false, null, $"{response.StatusCode} - {errorStr}");
+            await resFailEndpoint.Send(new GotItTransactionResFail()
+            {
+                Code = response.StatusCode.ToString(),
+                Message = errorStr,
+                Partner = Partner,
+                TransactionId = transReq.TransactionId,
+                ProductId = transReq.PropductId,
+                Created = DateTime.Now
+            });
+            
+            return new Application.Wrappers.Response<List<F5sVoucherCode>>(false, null, errorStr);
         }
 
-        private List<F5sVoucherCode> FormatVoucherCode(GotItBuyVoucherReq vReq, List<VoucherInfoRes> vRes)
+        private List<F5sVoucherCode> FormatVoucherCode(GotItBuyVoucherReq vReq, List<VoucherInfoRes> vRes, ISendEndpoint endPoint)
         {
             List<F5sVoucherCode> f5SVoucherCodes = new List<F5sVoucherCode>();
             foreach (var v in vRes)
@@ -69,6 +113,16 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
                     propductId = vReq.productCode,
                     productPrice = vReq.productPrice
                 });
+                endPoint.Send(new GotItTransactionResponse()
+                {
+                    Created = DateTime.Now,
+                    CustomerPhone = vReq.phone,
+                    ExpiryDate = v.expiryDate,
+                    ProductPrice = vReq.productPrice,
+                    PropductId = vReq.productCode,
+                    TransactionId = vReq.voucherRefId,
+                    VoucherCode = v.voucherCode
+                }).Wait();
             }
             return f5SVoucherCodes;
         }

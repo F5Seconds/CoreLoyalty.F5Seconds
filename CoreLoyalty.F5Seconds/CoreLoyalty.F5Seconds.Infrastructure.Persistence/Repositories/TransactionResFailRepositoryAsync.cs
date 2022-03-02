@@ -11,13 +11,13 @@ using System.Threading.Tasks;
 
 namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories
 {
-    public class TransactionResFailRepositoryAsync : GenericRepositoryAsync<TransactionResFail>, ITransactionResFailRepositoryAsync
+    public class TransactionResFailRepositoryAsync : GenericRepositoryAsync<GotItTransactionResFail>, IGotItTransResFailRepositoryAsync
     {
-        private readonly DbSet<TransactionResFail> _transactionResFail;
+        private readonly DbSet<GotItTransactionResFail> _transactionResFail;
 
         public TransactionResFailRepositoryAsync(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _transactionResFail = dbContext.Set<TransactionResFail>();
+            _transactionResFail = dbContext.Set<GotItTransactionResFail>();
         }
     }
 }

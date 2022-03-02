@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CoreLoyalty.F5Seconds.Application.Interfaces.Repositories
 {
-    public interface ITransactionResFailRepositoryAsync : IGenericRepositoryAsync<TransactionResFail>
+    public interface IGotItTransResFailRepositoryAsync : IGenericRepositoryAsync<GotItTransactionResFail>
     {
     }
 }

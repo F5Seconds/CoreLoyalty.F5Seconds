@@ -6,12 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories
 {
-    public class TransactionResponseRepositoryAsync : GenericRepositoryAsync<TransactionResponse>, ITransactionResponseRepositoryAsync
+    public class TransactionResponseRepositoryAsync : GenericRepositoryAsync<GotItTransactionResponse>, IGotItTransResRepositoryAsync
     {
-        private readonly DbSet<TransactionResponse> _transactionResponse;
+        private readonly DbSet<GotItTransactionResponse> _transactionResponse;
         public TransactionResponseRepositoryAsync(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _transactionResponse = dbContext.Set<TransactionResponse>();
+            _transactionResponse = dbContext.Set<GotItTransactionResponse>();
         }
     }
 }

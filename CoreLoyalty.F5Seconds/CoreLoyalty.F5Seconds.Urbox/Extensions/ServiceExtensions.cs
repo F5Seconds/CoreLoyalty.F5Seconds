@@ -1,4 +1,4 @@
-﻿using CoreLoyalty.F5Seconds.Application.Enums;
+﻿using CoreLoyalty.F5Seconds.Infrastructure.Shared.Const;
 using CoreLoyalty.F5Seconds.Infrastructure.Shared.RabbitMq.Consumer;
 using CoreLoyalty.F5Seconds.Urbox.Interfaces;
 using CoreLoyalty.F5Seconds.Urbox.Repositories;
@@ -102,13 +102,13 @@ namespace CoreLoyalty.F5Seconds.Urbox.Extensions
 
             if (env.IsProduction())
             {
-                rabbitHost = Environment.GetEnvironmentVariable(RabbitMqs.RABBITMQ_HOST.ToString());
-                rabbitvHost = Environment.GetEnvironmentVariable(RabbitMqs.RABBITMQ_VHOST.ToString());
-                rabbitUser = Environment.GetEnvironmentVariable(RabbitMqs.RABBITMQ_USER.ToString());
-                rabbitPass = Environment.GetEnvironmentVariable(RabbitMqs.RABBITMQ_PASS.ToString());
-                rabbitTransReqQueue = Environment.GetEnvironmentVariable(RabbitMqs.RABBITMQ_REQ_QUEUE.ToString());
-                rabbitTransResQueue = Environment.GetEnvironmentVariable(RabbitMqs.RABBITMQ_RES_SUCCESS_QUEUE.ToString());
-                rabbitTransResFailQueue = Environment.GetEnvironmentVariable(RabbitMqs.RABBITMQ_RES_FAIL_QUEUE.ToString());
+                rabbitHost = Environment.GetEnvironmentVariable(RabbitMqConst.Host);
+                rabbitvHost = Environment.GetEnvironmentVariable(RabbitMqConst.Vhost);
+                rabbitUser = Environment.GetEnvironmentVariable(RabbitMqConst.User);
+                rabbitPass = Environment.GetEnvironmentVariable(RabbitMqConst.Pass);
+                rabbitTransReqQueue = Environment.GetEnvironmentVariable(RabbitMqConst.TransRequest);
+                rabbitTransResQueue = Environment.GetEnvironmentVariable(RabbitMqConst.TransResSuccess);
+                rabbitTransResFailQueue = Environment.GetEnvironmentVariable(RabbitMqConst.TransResFail);
             }
 
             services.AddMassTransit(x =>

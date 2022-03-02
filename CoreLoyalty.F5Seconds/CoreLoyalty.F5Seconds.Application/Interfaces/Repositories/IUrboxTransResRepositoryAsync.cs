@@ -2,7 +2,7 @@
 
 namespace CoreLoyalty.F5Seconds.Application.Interfaces.Repositories
 {
-    public interface ITransactionResponseRepositoryAsync : IGenericRepositoryAsync<TransactionResponse>
+    public interface IUrboxTransResRepositoryAsync : IGenericRepositoryAsync<UrboxTransactionResponse>
     {
     }
 }

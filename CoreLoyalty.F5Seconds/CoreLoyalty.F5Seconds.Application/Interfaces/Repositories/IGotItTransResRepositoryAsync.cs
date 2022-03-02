@@ -2,7 +2,7 @@
 
 namespace CoreLoyalty.F5Seconds.Application.Interfaces.Repositories
 {
-    public interface ITransactionRequestRepositoryAsync:IGenericRepositoryAsync<TransactionRequest>
+    public interface IGotItTransResRepositoryAsync : IGenericRepositoryAsync<GotItTransactionResponse>
     {
     }
 }

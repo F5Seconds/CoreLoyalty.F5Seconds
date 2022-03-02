@@ -1,7 +1,7 @@
 ﻿using CoreLoyalty.F5Seconds.GotIt.Interfaces;
 using CoreLoyalty.F5Seconds.GotIt.Repositories;
+using CoreLoyalty.F5Seconds.Infrastructure.Shared.Const;
 using CoreLoyalty.F5Seconds.Infrastructure.Shared.RabbitMq.Consumer;
-using CoreLoyalty.F5Seconds.Shared.RabbitMq.Consumer;
 using GreenPipes;
 using MassTransit;
 using Microsoft.AspNetCore.Hosting;
@@ -50,19 +50,19 @@ namespace CoreLoyalty.F5Seconds.GotIt.Extensions
             string rabbitvHost = configuration["RabbitMqSettings:vHost"];
             string rabbitUser = configuration["RabbitMqSettings:Username"];
             string rabbitPass = configuration["RabbitMqSettings:Password"];
-            string rabbitTransReqQueue = configuration["RabbitMqSettings:transactionRequestQueue"];
-            string rabbitTransResQueue = configuration["RabbitMqSettings:transactionResponseQueue"];
-            string rabbitTransResFailQueue = configuration["RabbitMqSettings:rabbitTransResFailQueue"];
+            string rabbitTransReqQueue = configuration["RabbitMqSettings:transactionReqQueue"];
+            string rabbitTransResQueue = configuration["RabbitMqSettings:transactionResQueue"];
+            string rabbitTransResFailQueue = configuration["RabbitMqSettings:transactionResFailQueue"];
 
             if (env.IsProduction())
             {
-                rabbitHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST");
-                rabbitvHost = Environment.GetEnvironmentVariable("RABBITMQ_VHOST");
-                rabbitUser = Environment.GetEnvironmentVariable("RABBITMQ_USER");
-                rabbitPass = Environment.GetEnvironmentVariable("RABBITMQ_PASS");
-                rabbitTransReqQueue = Environment.GetEnvironmentVariable("RABBITMQ_TRANS_REQUEST");
-                rabbitTransResQueue = Environment.GetEnvironmentVariable("RABBITMQ_TRANS_RES_SUCCESS");
-                rabbitTransResFailQueue = Environment.GetEnvironmentVariable("RABBITMQ_TRANS_RES_FAIL");
+                rabbitHost = Environment.GetEnvironmentVariable(RabbitMqConst.Host);
+                rabbitvHost = Environment.GetEnvironmentVariable(RabbitMqConst.Vhost);
+                rabbitUser = Environment.GetEnvironmentVariable(RabbitMqConst.User);
+                rabbitPass = Environment.GetEnvironmentVariable(RabbitMqConst.Pass);
+                rabbitTransReqQueue = Environment.GetEnvironmentVariable(RabbitMqConst.TransRequest);
+                rabbitTransResQueue = Environment.GetEnvironmentVariable(RabbitMqConst.TransResSuccess);
+                rabbitTransResFailQueue = Environment.GetEnvironmentVariable(RabbitMqConst.TransResFail);
             }
 
             services.AddMassTransit(x =>

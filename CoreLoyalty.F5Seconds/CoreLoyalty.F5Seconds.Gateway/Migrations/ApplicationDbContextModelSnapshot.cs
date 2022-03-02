@@ -17,6 +17,144 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.5");
 
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.GotItTransactionRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CustomerId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CustomerPhone")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Partner")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Payload")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PropductId")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TransactionId")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GotItTransactionRequests");
+                });
+
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.GotItTransactionResFail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Partner")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Payload")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ProductId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("TransactionId")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GotItTransactionResFails");
+                });
+
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.GotItTransactionResponse", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CustomerPhone")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ExpiryDate")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Payload")
+                        .HasColumnType("longtext");
+
+                    b.Property<float>("ProductPrice")
+                        .HasColumnType("float");
+
+                    b.Property<string>("PropductId")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TransactionId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("VoucherCode")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GotItTransactionResponses");
+                });
+
             modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -73,7 +211,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.TransactionRequest", b =>
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.UrboxTransactionRequest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -100,6 +238,9 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("Partner")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Payload")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("PropductId")
                         .HasColumnType("longtext");
 
@@ -114,10 +255,10 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TransactionRequests");
+                    b.ToTable("UrboxTransactionRequests");
                 });
 
-            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.TransactionResFail", b =>
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.UrboxTransactionResFail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -144,6 +285,9 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("Partner")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Payload")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("ProductId")
                         .HasColumnType("longtext");
 
@@ -152,10 +296,10 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TransactionResFails");
+                    b.ToTable("UrboxTransactionResFails");
                 });
 
-            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.TransactionResponse", b =>
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.UrboxTransactionResponse", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -170,6 +314,9 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("CustomerPhone")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("ExpiryDate")
                         .HasColumnType("longtext");
 
@@ -179,11 +326,17 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Payload")
+                        .HasColumnType("longtext");
+
                     b.Property<float>("ProductPrice")
                         .HasColumnType("float");
 
                     b.Property<string>("PropductId")
                         .HasColumnType("longtext");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("TransactionId")
                         .HasColumnType("longtext");
@@ -193,7 +346,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TransactionResponses");
+                    b.ToTable("UrboxTransactionResponses");
                 });
 #pragma warning restore 612, 618
         }

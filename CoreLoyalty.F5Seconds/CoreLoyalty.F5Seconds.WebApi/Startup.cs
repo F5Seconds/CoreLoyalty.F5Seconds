@@ -16,15 +16,17 @@ namespace CoreLoyalty.F5Seconds.WebApi
     public class Startup
     {
         public IConfiguration _config { get; }
-        public Startup(IConfiguration configuration)
+        private readonly IWebHostEnvironment _env;
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             _config = configuration;
+            _env = env;
         }
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationLayer();
-            services.AddIdentityInfrastructure(_config);
-            services.AddPersistenceInfrastructure(_config);
+            services.AddIdentityInfrastructure(_config,_env);
+            services.AddPersistenceInfrastructure(_config,_env.IsDevelopment());
             services.AddSharedInfrastructure(_config);
             services.AddSwaggerExtension();
             services.AddControllers();

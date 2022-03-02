@@ -20,9 +20,12 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Contexts
             _authenticatedUser = authenticatedUser;
         }
         public DbSet<Product> Products { get; set; }
-        public DbSet<TransactionRequest> TransactionRequests { get; set; }
-        public DbSet<TransactionResponse> TransactionResponses { get; set; }
-        public DbSet<TransactionResFail> TransactionResFails { get; set; }
+        public DbSet<GotItTransactionRequest> GotItTransactionRequests { get; set; }
+        public DbSet<GotItTransactionResponse> GotItTransactionResponses { get; set; }
+        public DbSet<GotItTransactionResFail> GotItTransactionResFails { get; set; }
+        public DbSet<UrboxTransactionRequest> UrboxTransactionRequests { get; set; }
+        public DbSet<UrboxTransactionResponse> UrboxTransactionResponses { get; set; }
+        public DbSet<UrboxTransactionResFail> UrboxTransactionResFails { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
