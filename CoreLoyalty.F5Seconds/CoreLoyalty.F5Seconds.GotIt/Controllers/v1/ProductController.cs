@@ -38,5 +38,12 @@ namespace CoreLoyalty.F5Seconds.GotIt.Controllers.v1
             var gotItBuy = await _gotItHttpClientService.BuyVoucherAsync(payload);
             return Ok(gotItBuy);
         }
+
+        [HttpGet("transaction/check/{transId}")]
+        public async Task<IActionResult> GetTransactionCheck(string transId)
+        {
+            var result = await _gotItHttpClientService.VoucherTransCheck(new GotItTransCheckReq() { voucherRefId = transId});
+            return Ok(result);
+        }
     }
 }

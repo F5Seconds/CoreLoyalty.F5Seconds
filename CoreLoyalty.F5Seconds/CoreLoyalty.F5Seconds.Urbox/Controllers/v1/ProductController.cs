@@ -42,5 +42,12 @@ namespace CoreLoyalty.F5Seconds.Urbox.Controllers.v1
             var code = await _urboxHttpClientService.BuyVoucherAsync(payload);
             return Ok(code);    
         }
+
+        [HttpPost("transaction/check/{transId}")]
+        public async Task<IActionResult> GetTransactionCheck(string transId)
+        {
+            var result = await _urboxHttpClientService.VoucherTransCheck(new UrboxTransCheckReq() { transaction_id = transId});
+            return Ok(result);
+        }
     }
 }

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CoreLoyalty.F5Seconds.Application.Interfaces.Repositories
+namespace CoreLoyalty.F5Seconds.Application.Interfaces.GotIt.Repositories
 {
     public interface IGotItTransResFailRepositoryAsync : IGenericRepositoryAsync<GotItTransactionResFail>
     {

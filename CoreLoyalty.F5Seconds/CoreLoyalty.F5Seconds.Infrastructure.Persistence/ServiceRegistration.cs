@@ -1,7 +1,11 @@
 ﻿using CoreLoyalty.F5Seconds.Application.Interfaces;
+using CoreLoyalty.F5Seconds.Application.Interfaces.GotIt.Repositories;
 using CoreLoyalty.F5Seconds.Application.Interfaces.Repositories;
+using CoreLoyalty.F5Seconds.Application.Interfaces.Urbox.Repositories;
 using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Contexts;
 using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories;
+using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories.GotIt;
+using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories.Urbox;
 using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -31,9 +35,14 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence
             #region Repositories
             services.AddTransient(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
             services.AddTransient<IProductRepositoryAsync, ProductRepositoryAsync>();
-            services.AddTransient<IGotItTransReqRepositoryAsync, TransactionRequestRepositoryAsync>();
-            services.AddTransient<IGotItTransResRepositoryAsync, TransactionResponseRepositoryAsync>();
-            services.AddTransient<IGotItTransResFailRepositoryAsync, TransactionResFailRepositoryAsync>();
+
+            services.AddTransient<IGotItTransReqRepositoryAsync, GotItTransReqRepositoryAsync>();
+            services.AddTransient<IGotItTransResSuccessRepositoryAsync, GotItTransResSuccessRepositoryAsync>();
+            services.AddTransient<IGotItTransResFailRepositoryAsync, GotItTransResFailRepositoryAsync>();
+
+            services.AddTransient<IUrboxTransReqRepositoryAsync, UrboxTransReqRepositoryAsync>();
+            services.AddTransient<IUrboxTransResSuccessRepositoryAsync, UrboxTransResSuccessRepositoryAsync>();
+            services.AddTransient<IUrboxTransResFailRepositoryAsync, UrboxTransResFailRepositoryAsync>();
             #endregion
         }
     }

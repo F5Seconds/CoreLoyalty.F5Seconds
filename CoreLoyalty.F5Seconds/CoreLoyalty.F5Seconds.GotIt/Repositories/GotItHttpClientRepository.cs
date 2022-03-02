@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,11 +47,15 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
         }
         public async Task<Application.Wrappers.Response<List<F5sVoucherCode>>> BuyVoucherAsync(GotItBuyVoucherReq voucher)
         {
-            var transReq = _mapper.Map<GotItTransactionRequest>(voucher, opt => opt.AfterMap((s, d) => d.Partner = Partner));
-            var requestEndpoint = await _bus.GetSendEndpoint(RabbitMqConst.FormatUriRabbitMq(1, _env.IsProduction(), _config));
-            var resSuccessEndpoint = await _bus.GetSendEndpoint(RabbitMqConst.FormatUriRabbitMq(2, _env.IsProduction(), _config));
-            var resFailEndpoint = await _bus.GetSendEndpoint(RabbitMqConst.FormatUriRabbitMq(3, _env.IsProduction(), _config));
-            var content = new StringContent(JsonConvert.SerializeObject(voucher), Encoding.UTF8, "application/json");
+            string payloadBuyVoucher = JsonConvert.SerializeObject(voucher, Formatting.Indented);
+            var transReq = _mapper.Map<GotItTransactionRequest>(voucher, opt => opt.AfterMap((s, d) => { 
+                d.Partner = Partner; 
+                d.Payload = payloadBuyVoucher;
+            }));
+            var requestEndpoint = await _bus.GetSendEndpoint(RabbitMqEnvConst.FormatUriRabbitMq(1, _env.IsProduction(), _config));
+            var resSuccessEndpoint = await _bus.GetSendEndpoint(RabbitMqEnvConst.FormatUriRabbitMq(2, _env.IsProduction(), _config));
+            var resFailEndpoint = await _bus.GetSendEndpoint(RabbitMqEnvConst.FormatUriRabbitMq(3, _env.IsProduction(), _config));
+            var content = new StringContent(payloadBuyVoucher, Encoding.UTF8, "application/json");
             var response = await _client.PostAsync("/api/transaction", content);
             if (response.IsSuccessStatusCode)
             {
@@ -66,6 +71,7 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
                         Partner = Partner,
                         TransactionId = transReq.TransactionId,
                         ProductId = transReq.PropductId,
+                        Payload = jsonString,
                         Created = DateTime.Now
                     });
                     return new Application.Wrappers.Response<List<F5sVoucherCode>>(false, null, error.code, new List<string> { error.msg });
@@ -81,7 +87,7 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
                 }
                 transReq.Status = 1;
                 await requestEndpoint.Send(transReq);
-                return new Application.Wrappers.Response<List<F5sVoucherCode>>(true,FormatVoucherCode(voucher,vRes, resSuccessEndpoint));
+                return new Application.Wrappers.Response<List<F5sVoucherCode>>(true,FormatVoucherCode(voucher,vRes, resSuccessEndpoint,jsonString));
             }
             transReq.Status = -1;
             await requestEndpoint.Send(transReq);
@@ -99,7 +105,7 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
             return new Application.Wrappers.Response<List<F5sVoucherCode>>(false, null, errorStr);
         }
 
-        private List<F5sVoucherCode> FormatVoucherCode(GotItBuyVoucherReq vReq, List<VoucherInfoRes> vRes, ISendEndpoint endPoint)
+        private List<F5sVoucherCode> FormatVoucherCode(GotItBuyVoucherReq vReq, List<VoucherInfoRes> vRes, ISendEndpoint endPoint,string payload)
         {
             List<F5sVoucherCode> f5SVoucherCodes = new List<F5sVoucherCode>();
             foreach (var v in vRes)
@@ -113,15 +119,23 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
                     propductId = vReq.productCode,
                     productPrice = vReq.productPrice
                 });
+                bool expried = DateTime.TryParseExact(v.expiryDate, "yyyy-MM-dd", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime expiryDate);
                 endPoint.Send(new GotItTransactionResponse()
                 {
                     Created = DateTime.Now,
                     CustomerPhone = vReq.phone,
-                    ExpiryDate = v.expiryDate,
+                    ExpiryDate = DateTime.Parse(v.expiryDate),
                     ProductPrice = vReq.productPrice,
                     PropductId = vReq.productCode,
                     TransactionId = vReq.voucherRefId,
-                    VoucherCode = v.voucherCode
+                    VoucherCode = v.voucherCode,
+                    Payload = payload,
+                    VoucherImageLink = v.voucherImageLink,
+                    VoucherLink  = v.voucherLink,
+                    VoucherLinkCode = v.voucherLinkCode,
+                    Type = v.product.productType,
+                    BrandId = v.product.brandId,
+                    BrandName = v.product.brandNm
                 }).Wait();
             }
             return f5SVoucherCodes;
@@ -186,6 +200,19 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
                     return new Application.Wrappers.Response<List<F5sVoucherBase>>(true, listV);
             }
             return new Application.Wrappers.Response<List<F5sVoucherBase>>(false, null, "Server Error");
+        }
+
+        public async Task<Application.Wrappers.Response<GotItTransCheckRes>> VoucherTransCheck(GotItTransCheckReq payload)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(payload, Formatting.Indented), Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync("/api/transaction/check", content);
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+                return new Application.Wrappers.Response<GotItTransCheckRes>(true, JsonConvert.DeserializeObject<GotItTransCheckRes>(jsonString));
+            }
+            var errorStr = await response.Content.ReadAsStringAsync();
+            return new Application.Wrappers.Response<GotItTransCheckRes>(false, null, errorStr);
         }
     }
 }

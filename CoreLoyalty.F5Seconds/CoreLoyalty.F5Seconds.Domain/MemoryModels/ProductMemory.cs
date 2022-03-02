@@ -7,5 +7,6 @@
         public int Size { get; set; }
         public float Price { get; set; }
         public string Partner { get; set; }
+        public int Type { get; set; }
     }
 }

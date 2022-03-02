@@ -11,6 +11,7 @@ namespace CoreLoyalty.F5Seconds.Application.DTOs.Urox
         public string transaction_id { get; set; }
         public string productCode { get; set; }
         public float productPrice { get; set; }
+        public int productType { get; set; }
         public List<UrboxBuyVoucherItem> dataBuy { get; set; }
         public class UrboxBuyVoucherItem
         {
@@ -51,6 +52,13 @@ namespace CoreLoyalty.F5Seconds.Application.DTOs.Urox
                     public string expired { get; set; }
                     public string code_image { get; set; }
                     public string estimateDelivery { get; set; }
+                    public string ttemail { get; set; }
+                    public string ttphone { get; set; }
+                    public int? city_id { get; set; }
+                    public int? district_id { get; set; }
+                    public int? ward_id { get; set; }
+                    public string delivery_note { get; set; }
+                    public string ttaddress { get; set; }
                 }
             }
         }

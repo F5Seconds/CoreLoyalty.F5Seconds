@@ -92,30 +92,30 @@ namespace CoreLoyalty.F5Seconds.Urbox.Extensions
 
         public static void AddRabbitMqExtension(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
         {
-            string rabbitHost = configuration["RabbitMqSettings:Host"];
-            string rabbitvHost = configuration["RabbitMqSettings:vHost"];
-            string rabbitUser = configuration["RabbitMqSettings:Username"];
-            string rabbitPass = configuration["RabbitMqSettings:Password"];
-            string rabbitTransReqQueue = configuration["RabbitMqSettings:transactionReqQueue"];
-            string rabbitTransResQueue = configuration["RabbitMqSettings:transactionResQueue"];
-            string rabbitTransResFailQueue = configuration["RabbitMqSettings:transactionResFailQueue"];
+            string rabbitHost = configuration[RabbitMqAppSettingConst.Host];
+            string rabbitvHost = configuration[RabbitMqAppSettingConst.Vhost];
+            string rabbitUser = configuration[RabbitMqAppSettingConst.User];
+            string rabbitPass = configuration[RabbitMqAppSettingConst.Pass];
+            string rabbitTransReqQueue = configuration[RabbitMqAppSettingConst.TransRequest];
+            string rabbitTransResQueue = configuration[RabbitMqAppSettingConst.TransResSuccess];
+            string rabbitTransResFailQueue = configuration[RabbitMqAppSettingConst.TransResFail];
 
             if (env.IsProduction())
             {
-                rabbitHost = Environment.GetEnvironmentVariable(RabbitMqConst.Host);
-                rabbitvHost = Environment.GetEnvironmentVariable(RabbitMqConst.Vhost);
-                rabbitUser = Environment.GetEnvironmentVariable(RabbitMqConst.User);
-                rabbitPass = Environment.GetEnvironmentVariable(RabbitMqConst.Pass);
-                rabbitTransReqQueue = Environment.GetEnvironmentVariable(RabbitMqConst.TransRequest);
-                rabbitTransResQueue = Environment.GetEnvironmentVariable(RabbitMqConst.TransResSuccess);
-                rabbitTransResFailQueue = Environment.GetEnvironmentVariable(RabbitMqConst.TransResFail);
+                rabbitHost = Environment.GetEnvironmentVariable(RabbitMqEnvConst.Host);
+                rabbitvHost = Environment.GetEnvironmentVariable(RabbitMqEnvConst.Vhost);
+                rabbitUser = Environment.GetEnvironmentVariable(RabbitMqEnvConst.User);
+                rabbitPass = Environment.GetEnvironmentVariable(RabbitMqEnvConst.Pass);
+                rabbitTransReqQueue = Environment.GetEnvironmentVariable(RabbitMqEnvConst.TransRequest);
+                rabbitTransResQueue = Environment.GetEnvironmentVariable(RabbitMqEnvConst.TransResSuccess);
+                rabbitTransResFailQueue = Environment.GetEnvironmentVariable(RabbitMqEnvConst.TransResFail);
             }
 
             services.AddMassTransit(x =>
             {
-                x.AddConsumer<TransactionRequestConsumer>();
-                x.AddConsumer<TransactionResponseConsumer>();
-                x.AddConsumer<TransactionResponseFailConsumer>();
+                x.AddConsumer<UrboxTransactionReqConsumer>();
+                x.AddConsumer<UrboxTransactionResSuccessConsumer>();
+                x.AddConsumer<UrboxTransactionResFailConsumer>();
                 x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
                 {
                     config.Host(rabbitHost, rabbitvHost, h =>
@@ -127,19 +127,19 @@ namespace CoreLoyalty.F5Seconds.Urbox.Extensions
                     {
                         ep.PrefetchCount = 16;
                         ep.UseMessageRetry(r => r.Interval(2, 100));
-                        ep.ConfigureConsumer<TransactionRequestConsumer>(provider);
+                        ep.ConfigureConsumer<UrboxTransactionReqConsumer>(provider);
                     });
                     config.ReceiveEndpoint(rabbitTransResQueue, ep =>
                     {
                         ep.PrefetchCount = 16;
                         ep.UseMessageRetry(r => r.Interval(2, 100));
-                        ep.ConfigureConsumer<TransactionResponseConsumer>(provider);
+                        ep.ConfigureConsumer<UrboxTransactionResSuccessConsumer>(provider);
                     });
                     config.ReceiveEndpoint(rabbitTransResFailQueue, ep =>
                     {
                         ep.PrefetchCount = 16;
                         ep.UseMessageRetry(r => r.Interval(2, 100));
-                        ep.ConfigureConsumer<TransactionResponseFailConsumer>(provider);
+                        ep.ConfigureConsumer<UrboxTransactionResFailConsumer>(provider);
                     });
                 }));
             });

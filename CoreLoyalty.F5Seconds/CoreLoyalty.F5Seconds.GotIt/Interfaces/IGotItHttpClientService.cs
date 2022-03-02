@@ -11,5 +11,6 @@ namespace CoreLoyalty.F5Seconds.GotIt.Interfaces
         Task<Response<List<F5sVoucherBase>>> VoucherListAsync();
         Task<Response<F5sVoucherDetail>> VoucherDetailAsync(int id);
         Task<Response<List<F5sVoucherCode>>> BuyVoucherAsync(GotItBuyVoucherReq voucher);
+        Task<Response<GotItTransCheckRes>> VoucherTransCheck(GotItTransCheckReq payload);
     }
 }

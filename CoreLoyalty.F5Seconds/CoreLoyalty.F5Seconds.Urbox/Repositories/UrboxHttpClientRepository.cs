@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _env;
         private readonly IBus _bus;
-        private string Partner = "URBOX";
+        private string _partner = "URBOX";
         public UrboxHttpClientRepository(HttpClient client, IConfiguration config, IMapper mapper, IWebHostEnvironment env, IBus bus)
         {
             _bus = bus;
@@ -36,12 +37,16 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
         }
         public async Task<Application.Wrappers.Response<List<F5sVoucherCode>>> BuyVoucherAsync(UrboxBuyVoucherReq voucher)
         {
-            var transReq = _mapper.Map<GotItTransactionRequest>(voucher,opt => opt.AfterMap((s,d) => d.Partner = Partner ));
-            var requestEndpoint = await _bus.GetSendEndpoint(RabbitMqConst.FormatUriRabbitMq(1,_env.IsProduction(),_config));
-            var resSuccessEndpoint = await _bus.GetSendEndpoint(RabbitMqConst.FormatUriRabbitMq(2, _env.IsProduction(), _config));
-            var resFailEndpoint = await _bus.GetSendEndpoint(RabbitMqConst.FormatUriRabbitMq(3, _env.IsProduction(), _config));
+            string payloadBuyVoucher = JsonConvert.SerializeObject(voucher, Formatting.Indented);
+            var transReq = _mapper.Map<UrboxTransactionRequest>(voucher,opt => opt.AfterMap((s,d) => { 
+                d.Partner = _partner; 
+                d.Payload = payloadBuyVoucher;
+            }));
+            var requestEndpoint = await _bus.GetSendEndpoint(RabbitMqEnvConst.FormatUriRabbitMq(1,_env.IsProduction(),_config));
+            var resSuccessEndpoint = await _bus.GetSendEndpoint(RabbitMqEnvConst.FormatUriRabbitMq(2, _env.IsProduction(), _config));
+            var resFailEndpoint = await _bus.GetSendEndpoint(RabbitMqEnvConst.FormatUriRabbitMq(3, _env.IsProduction(), _config));
             
-            var content = new StringContent(JsonConvert.SerializeObject(voucher), Encoding.UTF8, "application/json");
+            var content = new StringContent(payloadBuyVoucher, Encoding.UTF8, "application/json");
             var response = await _client.PostAsync($"/2.0/cart/cartPayVoucher?app_id={_config["Urbox:AppId"]}&app_secret={_config["Urbox:AppSecret"]}", content);
             if (response.IsSuccessStatusCode)
             {
@@ -51,13 +56,14 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
                 {
                     transReq.Status = 0;
                     await requestEndpoint.Send(transReq);
-                    await resFailEndpoint.Send(new GotItTransactionResFail()
+                    await resFailEndpoint.Send(new UrboxTransactionResFail()
                     {
                         Code = result.done.ToString(),
                         Message = result.msg,
-                        Partner = Partner,
+                        Partner = _partner,
                         TransactionId = transReq.TransactionId,
                         ProductId = transReq.PropductId,
+                        Payload = jsonString,
                         Created = DateTime.Now
                     });
                     return new Application.Wrappers.Response<List<F5sVoucherCode>>(false, null, result.msg);
@@ -65,24 +71,25 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
                 transReq.Status = 1;
                 await requestEndpoint.Send(transReq);
                 var resultV = JsonConvert.DeserializeObject<UrboxBuyVocherRes>(jsonString);
-                return new Application.Wrappers.Response<List<F5sVoucherCode>>(true,FormatVoucherCode(voucher,resultV.data.cart.code_link_gift,resSuccessEndpoint));
+                return new Application.Wrappers.Response<List<F5sVoucherCode>>(true,FormatVoucherCode(voucher,resultV.data.cart.code_link_gift,resSuccessEndpoint,jsonString));
             }
             transReq.Status = -1;
             await requestEndpoint.Send(transReq);
+            var errorStr = response.Content.ReadAsStringAsync().Result;
             await resFailEndpoint.Send(new GotItTransactionResFail()
             {
                 Code = response.StatusCode.ToString(),
-                Message = response.Content.ReadAsStringAsync().Result,
-                Partner = Partner,
+                Message = errorStr,
+                Partner = _partner,
                 TransactionId = transReq.TransactionId,
                 ProductId = transReq.PropductId,
                 Created = DateTime.Now
             });
 
-            return new Application.Wrappers.Response<List<F5sVoucherCode>>(false,null, response.Content.ReadAsStringAsync().Result);
+            return new Application.Wrappers.Response<List<F5sVoucherCode>>(false,null, errorStr);
         }
 
-        private List<F5sVoucherCode> FormatVoucherCode(UrboxBuyVoucherReq vReq,List<UrboxBuyVoucherResCode> vRes,ISendEndpoint endPoint)
+        private List<F5sVoucherCode> FormatVoucherCode(UrboxBuyVoucherReq vReq,List<UrboxBuyVoucherResCode> vRes,ISendEndpoint endPoint,string payload)
         {
             List<F5sVoucherCode> f5SVoucherCodes = new List<F5sVoucherCode>();
             foreach (var v in vRes)
@@ -96,15 +103,33 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
                     transactionId = vReq.transaction_id,
                     voucherCode = v.code
                 });
-                endPoint.Send(new GotItTransactionResponse()
+
+                bool expried = DateTime.TryParseExact(v.expired, "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.None,out DateTime expiryDate);
+                endPoint.Send(new UrboxTransactionResponse()
                 {
                     Created = DateTime.Now,
                     CustomerPhone = vReq.ttphone,
-                    ExpiryDate = v.expired,
+                    ExpiryDate = expried ? expiryDate : null,
                     ProductPrice = vReq.productPrice,
                     PropductId = vReq.productCode,
                     TransactionId = vReq.transaction_id,
-                    VoucherCode = v.code
+                    VoucherCode = v.code,
+                    Payload = payload,
+                    CodeDisplay = v.code_display,
+                    CodeDisplayType = v.code_display_type,
+                    CodeImage = v.code_image,
+                    EstimateDelivery =  v.estimateDelivery,
+                    Token = v.token,
+                    Link = v.link,
+                    DeliveryNote = v.delivery_note,
+                    Pin = v.pin,
+                    Address = v.ttaddress,
+                    CityId = v.city_id,
+                    DistrictId = v.district_id,
+                    Email = v.ttemail,
+                    Phone = v.ttphone,
+                    WardId = v.ward_id,
+                    Type = vReq.productType
                 }).Wait();
             }
             return f5SVoucherCodes;
@@ -139,6 +164,20 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
                 return new Application.Wrappers.Response<List<F5sVoucherBase>>(true,p);
             }
             return new Application.Wrappers.Response<List<F5sVoucherBase>>(false, null, "Server Error");
+        }
+
+        public async Task<Application.Wrappers.Response<UrboxTransCheckRes>> VoucherTransCheck(UrboxTransCheckReq payload)
+        {
+            string payloadTransCheck = JsonConvert.SerializeObject(payload, Formatting.Indented);
+            var content = new StringContent(payloadTransCheck, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync($"/2.0/cart/getByTransaction?app_id={_config["Urbox:AppId"]}&app_secret={_config["Urbox:AppSecret"]}", content);
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+                return new Application.Wrappers.Response<UrboxTransCheckRes>(true, JsonConvert.DeserializeObject<UrboxTransCheckRes>(jsonString));
+            }
+            var errorStr = await response.Content.ReadAsStringAsync();
+            return new Application.Wrappers.Response<UrboxTransCheckRes>(false, null, errorStr);
         }
     }
 }

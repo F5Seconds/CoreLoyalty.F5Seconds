@@ -3,7 +3,7 @@ using System;
 
 namespace CoreLoyalty.F5Seconds.Infrastructure.Shared.Const
 {
-    public static class RabbitMqConst
+    public static class RabbitMqEnvConst
     {
         public static string Host { get; set; } = "RABBITMQ_HOST";
         public static string Vhost { get; set; } = "RABBITMQ_USER";
@@ -37,5 +37,16 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Shared.Const
                     return new Uri($"rabbitmq://{rabbitHost}/{rabbitvHost}/{rabbitTransResFailQueue}");
             }
         }
+    }
+
+    public static class RabbitMqAppSettingConst
+    {
+        public static string Host { get; set; } = "RabbitMqSettings:Host";
+        public static string Vhost { get; set; } = "RabbitMqSettings:vHost";
+        public static string User { get; set; } = "RabbitMqSettings:Username";
+        public static string Pass { get; set; } = "RabbitMqSettings:Password";
+        public static string TransRequest { get; set; } = "RabbitMqSettings:transactionReqQueue";
+        public static string TransResSuccess { get; set; } = "RabbitMqSettings:transactionResQueue";
+        public static string TransResFail { get; set; } = "RabbitMqSettings:transactionResFailQueue";
     }
 }
