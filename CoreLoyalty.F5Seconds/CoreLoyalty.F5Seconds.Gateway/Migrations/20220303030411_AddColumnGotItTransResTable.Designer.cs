@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220302213343_EditAndAddColumnUrboxTransResTable")]
-    partial class EditAndAddColumnUrboxTransResTable
+    [Migration("20220303030411_AddColumnGotItTransResTable")]
+    partial class AddColumnGotItTransResTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -149,6 +149,9 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("PropductId")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("StateText")
+                        .HasColumnType("longtext");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -156,6 +159,12 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Type")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UsedBrand")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UsedTime")
                         .HasColumnType("longtext");
 
                     b.Property<string>("VoucherCode")

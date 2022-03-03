@@ -1,5 +1,7 @@
 ﻿using CoreLoyalty.F5Seconds.Infrastructure.Shared.Const;
 using CoreLoyalty.F5Seconds.Infrastructure.Shared.RabbitMq.Consumer;
+using CoreLoyalty.F5Seconds.Urbox.Consumer;
+using CoreLoyalty.F5Seconds.Urbox.HostedService;
 using CoreLoyalty.F5Seconds.Urbox.Interfaces;
 using CoreLoyalty.F5Seconds.Urbox.Repositories;
 using GreenPipes;
@@ -90,6 +92,11 @@ namespace CoreLoyalty.F5Seconds.Urbox.Extensions
             });
         }
 
+        public static void AddHostedService(this IServiceCollection services)
+        {
+            services.AddHostedService<TransCheckHostedService>();
+        }
+
         public static void AddRabbitMqExtension(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
         {
             string rabbitHost = configuration[RabbitMqAppSettingConst.Host];
@@ -99,7 +106,8 @@ namespace CoreLoyalty.F5Seconds.Urbox.Extensions
             string rabbitTransReqQueue = configuration[RabbitMqAppSettingConst.TransRequest];
             string rabbitTransResQueue = configuration[RabbitMqAppSettingConst.TransResSuccess];
             string rabbitTransResFailQueue = configuration[RabbitMqAppSettingConst.TransResFail];
-
+            string voucherNotUse = configuration[RabbitMqAppSettingConst.VoucherNotUsed];
+            string voucherUpdateStatus = configuration[RabbitMqAppSettingConst.VoucherUpdateStatus];
             if (env.IsProduction())
             {
                 rabbitHost = Environment.GetEnvironmentVariable(RabbitMqEnvConst.Host);
@@ -109,6 +117,8 @@ namespace CoreLoyalty.F5Seconds.Urbox.Extensions
                 rabbitTransReqQueue = Environment.GetEnvironmentVariable(RabbitMqEnvConst.TransRequest);
                 rabbitTransResQueue = Environment.GetEnvironmentVariable(RabbitMqEnvConst.TransResSuccess);
                 rabbitTransResFailQueue = Environment.GetEnvironmentVariable(RabbitMqEnvConst.TransResFail);
+                voucherNotUse = Environment.GetEnvironmentVariable(RabbitMqEnvConst.VoucherNotUsed);
+                voucherUpdateStatus = Environment.GetEnvironmentVariable(RabbitMqEnvConst.VoucherUpdateStatus);
             }
 
             services.AddMassTransit(x =>
@@ -116,6 +126,8 @@ namespace CoreLoyalty.F5Seconds.Urbox.Extensions
                 x.AddConsumer<UrboxTransactionReqConsumer>();
                 x.AddConsumer<UrboxTransactionResSuccessConsumer>();
                 x.AddConsumer<UrboxTransactionResFailConsumer>();
+                x.AddConsumer<UrboxVoucherNotUsedConsumer>();
+                x.AddConsumer<UrboxVoucherUpdateStatusConumer>();
                 x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
                 {
                     config.Host(rabbitHost, rabbitvHost, h =>
@@ -140,6 +152,18 @@ namespace CoreLoyalty.F5Seconds.Urbox.Extensions
                         ep.PrefetchCount = 16;
                         ep.UseMessageRetry(r => r.Interval(2, 100));
                         ep.ConfigureConsumer<UrboxTransactionResFailConsumer>(provider);
+                    });
+                    config.ReceiveEndpoint(voucherNotUse, ep =>
+                    {
+                        ep.PrefetchCount = 16;
+                        ep.UseMessageRetry(r => r.Interval(2, 100));
+                        ep.ConfigureConsumer<UrboxVoucherNotUsedConsumer>(provider);
+                    });
+                    config.ReceiveEndpoint(voucherUpdateStatus, ep =>
+                    {
+                        ep.PrefetchCount = 16;
+                        ep.UseMessageRetry(r => r.Interval(2, 100));
+                        ep.ConfigureConsumer<UrboxVoucherUpdateStatusConumer>(provider);
                     });
                 }));
             });

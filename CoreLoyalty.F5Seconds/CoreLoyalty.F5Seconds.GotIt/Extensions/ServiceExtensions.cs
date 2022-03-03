@@ -1,4 +1,6 @@
-﻿using CoreLoyalty.F5Seconds.GotIt.Interfaces;
+﻿using CoreLoyalty.F5Seconds.GotIt.Consumer;
+using CoreLoyalty.F5Seconds.GotIt.HostedService;
+using CoreLoyalty.F5Seconds.GotIt.Interfaces;
 using CoreLoyalty.F5Seconds.GotIt.Repositories;
 using CoreLoyalty.F5Seconds.Infrastructure.Shared.Const;
 using CoreLoyalty.F5Seconds.Infrastructure.Shared.RabbitMq.Consumer;
@@ -43,7 +45,12 @@ namespace CoreLoyalty.F5Seconds.GotIt.Extensions
                 config.ReportApiVersions = true;
             });
         }
-        
+
+        public static void AddHostedService(this IServiceCollection services)
+        {
+            services.AddHostedService<TransCheckHostedService>();
+        }
+
         public static void AddRabbitMqExtension(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
         {
             string rabbitHost = configuration[RabbitMqAppSettingConst.Host];
@@ -53,7 +60,8 @@ namespace CoreLoyalty.F5Seconds.GotIt.Extensions
             string rabbitTransReqQueue = configuration[RabbitMqAppSettingConst.TransRequest];
             string rabbitTransResQueue = configuration[RabbitMqAppSettingConst.TransResSuccess];
             string rabbitTransResFailQueue = configuration[RabbitMqAppSettingConst.TransResFail];
-
+            string voucherNotUse = configuration[RabbitMqAppSettingConst.VoucherNotUsed];
+            string voucherUpdateStatus = configuration[RabbitMqAppSettingConst.VoucherUpdateStatus];
             if (env.IsProduction())
             {
                 rabbitHost = Environment.GetEnvironmentVariable(RabbitMqEnvConst.Host);
@@ -63,6 +71,8 @@ namespace CoreLoyalty.F5Seconds.GotIt.Extensions
                 rabbitTransReqQueue = Environment.GetEnvironmentVariable(RabbitMqEnvConst.TransRequest);
                 rabbitTransResQueue = Environment.GetEnvironmentVariable(RabbitMqEnvConst.TransResSuccess);
                 rabbitTransResFailQueue = Environment.GetEnvironmentVariable(RabbitMqEnvConst.TransResFail);
+                voucherNotUse = Environment.GetEnvironmentVariable(RabbitMqEnvConst.VoucherNotUsed);
+                voucherUpdateStatus = Environment.GetEnvironmentVariable(RabbitMqEnvConst.VoucherUpdateStatus);
             }
 
             services.AddMassTransit(x =>
@@ -70,6 +80,8 @@ namespace CoreLoyalty.F5Seconds.GotIt.Extensions
                 x.AddConsumer<GotItTransactionReqConsumer>();
                 x.AddConsumer<GotItTransactionResSuccessConsumer>();
                 x.AddConsumer<GotItTransactionResFailConsumer>();
+                x.AddConsumer<GotItVoucherNotUsedConsumer>();
+                x.AddConsumer<GotItVoucherUpdateStatusConumer>();
                 x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
                 {
                     config.Host(rabbitHost, rabbitvHost, h =>
@@ -94,6 +106,18 @@ namespace CoreLoyalty.F5Seconds.GotIt.Extensions
                         ep.PrefetchCount = 16;
                         ep.UseMessageRetry(r => r.Interval(2, 100));
                         ep.ConfigureConsumer<GotItTransactionResFailConsumer>(provider);
+                    });
+                    config.ReceiveEndpoint(voucherNotUse, ep =>
+                    {
+                        ep.PrefetchCount = 16;
+                        ep.UseMessageRetry(r => r.Interval(2, 100));
+                        ep.ConfigureConsumer<GotItVoucherNotUsedConsumer>(provider);
+                    });
+                    config.ReceiveEndpoint(voucherUpdateStatus, ep =>
+                    {
+                        ep.PrefetchCount = 16;
+                        ep.UseMessageRetry(r => r.Interval(2, 100));
+                        ep.ConfigureConsumer<GotItVoucherUpdateStatusConumer>(provider);
                     });
                 }));
             });

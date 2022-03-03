@@ -42,6 +42,7 @@ namespace CoreLoyalty.F5Seconds.Urbox
             services.AddAutoMapper(typeof(Application.Mappings.GatewayProfile));
             services.AddHttpClientExtension(_config, _env);
             services.AddRabbitMqExtension(_config, _env);
+            services.AddHostedService();
             services.AddSwaggerExtension();
             services.AddApiVersioningExtension();
             services.AddControllers();

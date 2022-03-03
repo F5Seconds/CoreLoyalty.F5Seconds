@@ -28,5 +28,8 @@ namespace CoreLoyalty.F5Seconds.Domain.Entities
         public string Type { get; set; }
         public int? BrandId { get; set; }
         public string BrandName { get; set; }
+        public string UsedTime { get; set; }
+        public string UsedBrand { get; set; }
+        public string StateText { get; set; }
     }
 }

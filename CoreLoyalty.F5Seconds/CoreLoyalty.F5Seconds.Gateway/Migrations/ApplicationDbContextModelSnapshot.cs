@@ -147,6 +147,9 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("PropductId")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("StateText")
+                        .HasColumnType("longtext");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -154,6 +157,12 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Type")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UsedBrand")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UsedTime")
                         .HasColumnType("longtext");
 
                     b.Property<string>("VoucherCode")

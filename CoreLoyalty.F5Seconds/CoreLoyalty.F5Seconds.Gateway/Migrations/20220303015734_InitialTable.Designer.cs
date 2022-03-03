@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220302100751_InitailTables")]
-    partial class InitailTables
+    [Migration("20220303015734_InitialTable")]
+    partial class InitialTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -113,6 +113,12 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<int?>("BrandId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BrandName")
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime(6)");
 
@@ -125,8 +131,8 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ExpiryDate")
-                        .HasColumnType("longtext");
+                    b.Property<DateTime?>("ExpiryDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime(6)");
@@ -149,7 +155,19 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("TransactionId")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Type")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("VoucherCode")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("VoucherImageLink")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("VoucherLink")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("VoucherLinkCode")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -307,6 +325,21 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<string>("Address")
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("CityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CodeDisplay")
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("CodeDisplayType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CodeImage")
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime(6)");
 
@@ -316,11 +349,20 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("CustomerPhone")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("DeliveryNote")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ExpiryDate")
+                    b.Property<int?>("DistrictId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
                         .HasColumnType("longtext");
+
+                    b.Property<string>("EstimateDelivery")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("ExpiryDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime(6)");
@@ -328,7 +370,16 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Link")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Payload")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Pin")
                         .HasColumnType("longtext");
 
                     b.Property<float>("ProductPrice")
@@ -340,11 +391,20 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<string>("Token")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("TransactionId")
                         .HasColumnType("longtext");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
                     b.Property<string>("VoucherCode")
                         .HasColumnType("longtext");
+
+                    b.Property<int?>("WardId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

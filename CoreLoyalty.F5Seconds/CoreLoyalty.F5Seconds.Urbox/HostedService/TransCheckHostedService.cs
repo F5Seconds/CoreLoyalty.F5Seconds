@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CoreLoyalty.F5Seconds.Application.Interfaces.GotIt.Repositories;
+using CoreLoyalty.F5Seconds.Application.Interfaces.Urbox.Repositories;
 using CoreLoyalty.F5Seconds.Infrastructure.Shared.Const;
 using MassTransit;
 using Microsoft.AspNetCore.Hosting;
@@ -8,11 +8,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NCrontab;
+using Newtonsoft.Json;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CoreLoyalty.F5Seconds.GotIt.HostedService
+namespace CoreLoyalty.F5Seconds.Urbox.HostedService
 {
     public class TransCheckHostedService : IHostedService, IDisposable
     {
@@ -52,18 +53,17 @@ namespace CoreLoyalty.F5Seconds.GotIt.HostedService
             string rabbitHost = _config[RabbitMqAppSettingConst.Host];
             string rabbitvHost = _config[RabbitMqAppSettingConst.Vhost];
             string voucherNotUse = _config[RabbitMqAppSettingConst.VoucherNotUsed];
-            string voucherUpdateStatus = _config[RabbitMqAppSettingConst.VoucherUpdateStatus];
             if (_env.IsProduction())
             {
                 rabbitHost = Environment.GetEnvironmentVariable(RabbitMqEnvConst.Host);
                 rabbitvHost = Environment.GetEnvironmentVariable(RabbitMqEnvConst.Vhost);
                 voucherNotUse = Environment.GetEnvironmentVariable(RabbitMqEnvConst.VoucherNotUsed);
-                voucherUpdateStatus = Environment.GetEnvironmentVariable(RabbitMqEnvConst.VoucherUpdateStatus);
             }
             using (var scope = _service.CreateScope())
             {
-                var _gotItTransResponse = scope.ServiceProvider.GetRequiredService<IGotItTransResSuccessRepositoryAsync>();
+                var _gotItTransResponse = scope.ServiceProvider.GetRequiredService<IUrboxTransResSuccessRepositoryAsync>();
                 var voucherNotUsed = await _gotItTransResponse.ListVoucherNotUsed();
+                
                 if(voucherNotUsed is not null && voucherNotUsed.Count > 0)
                 {
                     Uri uri = new Uri($"rabbitmq://{rabbitHost}/{rabbitvHost}/{voucherNotUse}");
