@@ -5,7 +5,8 @@ dotnet ef migrations add InitialCreate --context ApplicationDbContext --project 
 dotnet ef migrations remove --context ApplicationDbContext
 
 docker build . -t gateway.f5seconds.vn:v.1.0 -f CoreLoyalty.F5Seconds\CoreLoyalty.F5Seconds.Gateway/Dockerfile
-docker build . -t gotit.f5seconds.vn:v.1.0 -f CoreLoyalty.F5Seconds\CoreLoyalty.F5Seconds.GotIt/Dockerfile
+docker build . -t gotit.f5seconds.vn:v.1.0 -f CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.GotIt/Dockerfile
+docker build . -t urbox.f5seconds.vn:v.1.0 -f CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.Urbox/Dockerfile
 
 netstat -ano -p TCP | find /I "5001"
 taskkill /F /PID 43656

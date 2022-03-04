@@ -34,8 +34,8 @@ namespace CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransact
             private readonly IMapper _mapper;
             private readonly ILogger<CreateTransactionCommandHandler> _logger;
             public CreateTransactionCommandHandler(
-                IMemoryCache cache, 
-                IUrboxHttpClientExternalService urboxClient, 
+                IMemoryCache cache,
+                IUrboxHttpClientExternalService urboxClient,
                 IGotItHttpClientExternalService gotItClient,
                 ILogger<CreateTransactionCommandHandler> logger,
                 IMapper mapper)
@@ -49,16 +49,17 @@ namespace CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransact
             public async Task<Response<List<F5sVoucherCode>>> Handle(CreateTransactionCommand request, CancellationToken cancellationToken)
             {
                 _cache.TryGetValue("ProductCache", out products);
-                if(products is null) return new Response<List<F5sVoucherCode>>(false,null, "No data found");
+                if (products is null) return new Response<List<F5sVoucherCode>>(false, null, "No data found");
                 var p = products.SingleOrDefault(x => x.Code.Equals(request.propductId));
-                if(p is null) return new Response<List<F5sVoucherCode>>(false,null, "No data found");
+                if (p is null) return new Response<List<F5sVoucherCode>>(false, null, "No data found");
                 if (p.Partner.Equals("URBOX"))
                 {
-                    var urboxBuyInfo = _mapper.Map<UrboxBuyVoucherReq>(request, opt => opt.AfterMap((s, d) => { 
+                    var urboxBuyInfo = _mapper.Map<UrboxBuyVoucherReq>(request, opt => opt.AfterMap((s, d) =>
+                    {
                         d.productPrice = p.Price;
                         d.productCode = p.Code;
                         d.productType = p.Type;
-                        d.dataBuy = new List<UrboxBuyVoucherReq.UrboxBuyVoucherItem>(); 
+                        d.dataBuy = new List<UrboxBuyVoucherReq.UrboxBuyVoucherItem>();
                     }));
                     urboxBuyInfo.dataBuy.Add(new UrboxBuyVoucherReq.UrboxBuyVoucherItem()
                     {
@@ -66,13 +67,13 @@ namespace CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransact
                         quantity = request.quantity
                     });
                     urboxBuyInfo.transaction_id = "00000000967";
-                    _logger.LogInformation(JsonConvert.SerializeObject(urboxBuyInfo));
                     var urboxBuy = await _urboxClient.BuyVoucherAsync(urboxBuyInfo);
                     return urboxBuy;
                 }
                 if (p.Partner.Equals("GOTIT"))
                 {
-                    var gotItBuyInfo = _mapper.Map<GotItBuyVoucherReq>(request, opt => opt.AfterMap((s, d) => {
+                    var gotItBuyInfo = _mapper.Map<GotItBuyVoucherReq>(request, opt => opt.AfterMap((s, d) =>
+                    {
                         d.productId = p.ProductId;
                         d.productPriceId = p.Size;
                         d.productCode = p.Code;
@@ -82,7 +83,7 @@ namespace CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransact
 
                     return gotItBuy;
                 }
-                return new Response<List<F5sVoucherCode>>(false,null,"Not found data");
+                return new Response<List<F5sVoucherCode>>(false, null, "Not found data");
             }
         }
     }

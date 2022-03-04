@@ -28,9 +28,10 @@ namespace CoreLoyalty.F5Seconds.Urbox.Extensions
             {
                 uri = Environment.GetEnvironmentVariable("URBOX_URI");
                 appId = Environment.GetEnvironmentVariable("URBOX_APPID");
-                appId = Environment.GetEnvironmentVariable("URBOX_APPID");
+                appId = Environment.GetEnvironmentVariable("URBOX_APPSECRET");
             }
-            services.AddHttpClient<IUrboxHttpClientService, UrboxHttpClientRepository>(c => {
+            services.AddHttpClient<IUrboxHttpClientService, UrboxHttpClientRepository>(c =>
+            {
                 c.BaseAddress = new Uri($"{uri}");
             });
         }
