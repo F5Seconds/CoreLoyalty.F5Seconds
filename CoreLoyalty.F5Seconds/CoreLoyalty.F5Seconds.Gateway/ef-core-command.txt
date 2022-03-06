@@ -4,16 +4,16 @@ dotnet ef database update --context ApplicationDbContext --project CoreLoyalty.F
 dotnet ef migrations add InitialCreate --context ApplicationDbContext --project CoreLoyalty.F5Seconds\CoreLoyalty.F5Seconds.Gateway
 dotnet ef migrations remove --context ApplicationDbContext
 
-docker build . -t gateway.f5seconds.vn:v.1.0 -f CoreLoyalty.F5Seconds\CoreLoyalty.F5Seconds.Gateway/Dockerfile
+docker build . -t gateway.f5seconds.vn:v.1.3 -f CoreLoyalty.F5Seconds\CoreLoyalty.F5Seconds.Gateway/Dockerfile
 docker build . -t gotit.f5seconds.vn:v.1.0 -f CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.GotIt/Dockerfile
 docker build . -t urbox.f5seconds.vn:v.1.0 -f CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.Urbox/Dockerfile
 
 netstat -ano -p TCP | find /I "5001"
 taskkill /F /PID 43656
 
-docker run -d -p 5051:5051 --name gotit_f5s --network gateway_core_loyalty giabaodocker/gotit.f5seconds.vn:v.1.0
-docker run -d -p 5052:5052 --name urbox_f5s --network gateway_core_loyalty giabaodocker/urbox.f5seconds.vn:v.1.0
-docker run -d -p 5053:5053 --name gateway_f5s --network gateway_core_loyalty -e DB_URI_APPLICATION="server=loyalty_mysql;port=3306;database=CoreLoyalty;uid=root;password=f5seconds" -e DB_URI_IDENTITY="server=loyalty_mysql;port=3306;database=CoreLoyalty;uid=root;password=f5seconds" -e RABBITMQ_HOST=f5s_gateway_mq -e RABBITMQ_VHOST=gateway -e RABBITMQ_USER=f5s -e RABBITMQ_PASS=F5seconds2021 -e RABBITMQ_PRODUCTSYNC=productSyncQueue -e PARTNER_URI_GOTIT=http://gotit_f5s:5051 -e PARTNER_URI_URBOX=http://urbox_f5s:5052 -e SCHEDULE_PRODUCTSYNC="0 0 0 * * *" giabaodocker/gateway.f5seconds.vn:v.1.0
+docker run -d -p 5051:5051 --name gotit_f5s --network gateway_core_loyalty -e DB_URI_APPLICATION="server=loyalty_mysql;port=3306;database=CoreLoyalty;uid=root;password=f5seconds" -e DB_URI_IDENTITY="server=loyalty_mysql;port=3306;database=CoreLoyalty;uid=root;password=f5seconds" -e RABBITMQ_HOST=f5s_gateway_mq -e RABBITMQ_VHOST=gateway -e RABBITMQ_USER=f5s -e RABBITMQ_PASS=F5seconds2021 -e RABBITMQ_TRANS_REQUEST=transactionReqGotItQueue -e RABBITMQ_TRANS_RES_SUCCESS=transactionResGotItQueue -e RABBITMQ_TRANS_RES_FAIL=rabbitTransResGotItFailQueue -e RABBITMQ_VOUCHER_NOTUSE=voucherGotItNotUsedQueue -e RABBITMQ_VOUCHER_UPDATESTATUS=voucherGotItUpdateStatusQueue -e SCHEDULE_TRANSCHECK="*/10 * * * * *" -e GOTIT_URI=https://biz-stg.gotit.vn -e GOTIT_TOKEN=d084e182915cda011778889ad6d6f7950d1f4880544d6bf7a631d7c4df10fc08  giabaodocker/gotit.f5seconds.vn:v.1.1
+docker run -d -p 5052:5052 --name urbox_f5s --network gateway_core_loyalty -e DB_URI_APPLICATION="server=loyalty_mysql;port=3306;database=CoreLoyalty;uid=root;password=f5seconds" -e DB_URI_IDENTITY="server=loyalty_mysql;port=3306;database=CoreLoyalty;uid=root;password=f5seconds" -e RABBITMQ_HOST=f5s_gateway_mq -e RABBITMQ_VHOST=gateway -e RABBITMQ_USER=f5s -e RABBITMQ_PASS=F5seconds2021 -e RABBITMQ_TRANS_REQUEST=transactionReqUrboxQueue -e RABBITMQ_TRANS_RES_SUCCESS=transactionResUrboxQueue -e RABBITMQ_TRANS_RES_FAIL=rabbitTransResUrboxFailQueue -e RABBITMQ_VOUCHER_NOTUSE=voucherUrboxNotUsedQueue -e RABBITMQ_VOUCHER_UPDATESTATUS=voucherUrboxUpdateStatusQueue -e SCHEDULE_TRANSCHECK="*/10 * * * * *" -e URBOX_URI=https://sandapi.urbox.dev -e URBOX_APPID=500000114 -e URBOX_APPSECRET=72bf8db101aa8c41d18cd1c326f7d51a giabaodocker/urbox.f5seconds.vn:v.1.1
+docker run -d -p 5053:5053 --name gateway_f5s --network gateway_core_loyalty -e DB_URI_APPLICATION="server=loyalty_mysql;port=3306;database=CoreLoyalty;uid=root;password=f5seconds" -e DB_URI_IDENTITY="server=loyalty_mysql;port=3306;database=CoreLoyalty;uid=root;password=f5seconds" -e RABBITMQ_HOST=f5s_gateway_mq -e RABBITMQ_VHOST=gateway -e RABBITMQ_USER=f5s -e RABBITMQ_PASS=F5seconds2021 -e RABBITMQ_PRODUCTSYNC=productSyncQueue -e PARTNER_URI_GOTIT=http://gotit_f5s:5051 -e PARTNER_URI_URBOX=http://urbox_f5s:5052 -e SCHEDULE_PRODUCTSYNC="0 0 */1 * * *" giabaodocker/gateway.f5seconds.vn:v.1.3
 docker network create -d bridge gateway_core_loyalty
 docker network connect gateway_core_loyalty loyalty_mysql
 docker network connect gateway_core_loyalty f5s_gateway_mq

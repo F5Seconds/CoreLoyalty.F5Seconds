@@ -19,7 +19,7 @@ namespace CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransact
 {
     public class CreateTransactionCommand : IRequest<Response<List<F5sVoucherCode>>>
     {
-        public string propductId { get; set; }
+        public string productCode { get; set; }
         public int quantity { get; set; }
         public string transactionId { get; set; }
         public string customerId { get; set; }
@@ -50,7 +50,7 @@ namespace CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransact
             {
                 _cache.TryGetValue("ProductCache", out products);
                 if (products is null) return new Response<List<F5sVoucherCode>>(false, null, "No data found");
-                var p = products.SingleOrDefault(x => x.Code.Equals(request.propductId));
+                var p = products.SingleOrDefault(x => x.Code.Equals(request.productCode));
                 if (p is null) return new Response<List<F5sVoucherCode>>(false, null, "No data found");
                 if (p.Partner.Equals("URBOX"))
                 {

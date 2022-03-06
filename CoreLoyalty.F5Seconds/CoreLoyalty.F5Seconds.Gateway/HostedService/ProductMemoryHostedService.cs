@@ -78,7 +78,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.HostedService
                 var productMemories = _mapper.Map<List<ProductMemory>>(products);
                 await _cache.GetOrCreateAsync("ProductCache",entry =>
                 {
-                    entry.AbsoluteExpiration = DateTime.Now.AddHours(1);
+                    entry.AbsoluteExpiration = DateTime.Now.AddYears(1);
                     return Task.FromResult(productMemories);
                 });
             }
