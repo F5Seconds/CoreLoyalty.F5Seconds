@@ -15,6 +15,9 @@ namespace CoreLoyalty.F5Seconds.Application.DTOs.Urox
             public List<UrboxTransCheckResDataDetail> detail { get; set; }
             public class UrboxTransCheckResDataDetail
             {
+                public string channel { get; set; }
+                public string transactionId { get; set; }
+                public string productCode { get; set; }
                 public string using_time { get; set; }
                 public string link { get; set; }
                 public string delivery { get; set; }

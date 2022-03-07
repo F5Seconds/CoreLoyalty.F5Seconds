@@ -1,11 +1,11 @@
 ﻿using CoreLoyalty.F5Seconds.Domain.Common;
-using System.Collections.Generic;
 
 namespace CoreLoyalty.F5Seconds.Domain.Entities
 {
     public class GotItTransactionRequest : AuditableBaseEntity
     {
-        public string PropductId { get; set; }
+        public string Channel { get; set; }
+        public string ProductCode { get; set; }
         public int Quantity { get; set; }
         public string TransactionId { get; set; }
         public string CustomerId { get; set; }

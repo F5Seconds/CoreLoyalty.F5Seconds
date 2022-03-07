@@ -2,7 +2,8 @@
 {
     public class ProductMemory
     {
-        public string Code { get; set; }
+        public int Id { get; set; }
+        public string ProductCode { get; set; }
         public int ProductId { get; set; }
         public int Size { get; set; }
         public float Price { get; set; }

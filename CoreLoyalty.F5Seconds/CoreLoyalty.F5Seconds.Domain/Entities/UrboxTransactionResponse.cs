@@ -5,8 +5,9 @@ namespace CoreLoyalty.F5Seconds.Domain.Entities
 {
     public class UrboxTransactionResponse : AuditableBaseEntity
     {
+        public string Channel { get; set; }
         public string TransactionId { get; set; }
-        public string PropductId { get; set; }
+        public string ProductCode { get; set; }
         public float ProductPrice { get; set; }
         public string CustomerPhone { get; set; }
         public string VoucherCode { get; set; }

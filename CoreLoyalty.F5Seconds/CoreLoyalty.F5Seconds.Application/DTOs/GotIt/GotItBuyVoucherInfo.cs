@@ -45,6 +45,7 @@ namespace CoreLoyalty.F5Seconds.Application.DTOs.GotIt
 
     public class GotItBuyVoucherReq
     {
+        public string channel { get; set; }
         public int productId { get; set; }
         public int productPriceId { get; set; }
         public string productCode { get; set; }

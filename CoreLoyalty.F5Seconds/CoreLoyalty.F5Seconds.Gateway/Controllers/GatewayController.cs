@@ -32,7 +32,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Controllers
             {
                 customerId = "341721226",
                 customerPhone = "0979999067",
-                productCode = p.Code,
+                productCode = p.ProductCode,
                 quantity = 1,
                 transactionId = Guid.NewGuid().ToString()
             });

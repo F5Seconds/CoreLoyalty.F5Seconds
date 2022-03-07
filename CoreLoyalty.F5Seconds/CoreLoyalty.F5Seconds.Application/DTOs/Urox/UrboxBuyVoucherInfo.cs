@@ -6,10 +6,13 @@ namespace CoreLoyalty.F5Seconds.Application.DTOs.Urox
 {
     public class UrboxBuyVoucherReq
     {
+        public string channel { get; set; }
         public string site_user_id { get; set; }
         public string ttphone { get; set; }
         public string transaction_id { get; set; }
+        public int productId { get; set; }
         public string productCode { get; set; }
+        public int productPriceId { get; set; }
         public float productPrice { get; set; }
         public int productType { get; set; }
         public List<UrboxBuyVoucherItem> dataBuy { get; set; }

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CoreLoyalty.F5Seconds.Application\CoreLoyalty.F5Seconds.Application.csproj" />
+    <ProjectReference Include="..\CoreLoyalty.F5Seconds.Infrastructure.Identity\CoreLoyalty.F5Seconds.Infrastructure.Identity.csproj" />
+    <ProjectReference Include="..\CoreLoyalty.F5Seconds.Infrastructure.Persistence\CoreLoyalty.F5Seconds.Infrastructure.Persistence.csproj" />
+    <ProjectReference Include="..\CoreLoyalty.F5Seconds.Infrastructure.Shared\CoreLoyalty.F5Seconds.Infrastructure.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

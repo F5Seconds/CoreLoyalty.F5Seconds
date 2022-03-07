@@ -48,7 +48,8 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
         public async Task<Application.Wrappers.Response<List<F5sVoucherCode>>> BuyVoucherAsync(GotItBuyVoucherReq voucher)
         {
             string payloadBuyVoucher = JsonConvert.SerializeObject(voucher, Formatting.Indented);
-            var transReq = _mapper.Map<GotItTransactionRequest>(voucher, opt => opt.AfterMap((s, d) => { 
+            var transReq = _mapper.Map<GotItTransactionRequest>(voucher, opt => opt.AfterMap((s, d) => {
+                d.Channel = voucher.channel;
                 d.Partner = Partner; 
                 d.Payload = payloadBuyVoucher;
             }));
@@ -70,7 +71,7 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
                         Message = error.msg,
                         Partner = Partner,
                         TransactionId = transReq.TransactionId,
-                        ProductId = transReq.PropductId,
+                        ProductCode = transReq.ProductCode,
                         Payload = jsonString,
                         Created = DateTime.Now
                     });
@@ -98,7 +99,7 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
                 Message = errorStr,
                 Partner = Partner,
                 TransactionId = transReq.TransactionId,
-                ProductId = transReq.PropductId,
+                ProductCode = transReq.ProductCode,
                 Created = DateTime.Now
             });
             
@@ -122,11 +123,12 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
                 bool expried = DateTime.TryParseExact(v.expiryDate, "yyyy-MM-dd", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime expiryDate);
                 endPoint.Send(new GotItTransactionResponse()
                 {
+                    Channel = vReq.channel,
                     Created = DateTime.Now,
                     CustomerPhone = vReq.phone,
-                    ExpiryDate = DateTime.Parse(v.expiryDate),
+                    ExpiryDate = expried ? expiryDate : null,
                     ProductPrice = vReq.productPrice,
-                    PropductId = vReq.productCode,
+                    ProductCode = vReq.productCode,
                     TransactionId = vReq.voucherRefId,
                     VoucherCode = v.voucherCode,
                     Payload = payload,

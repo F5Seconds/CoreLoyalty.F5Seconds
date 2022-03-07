@@ -19,6 +19,7 @@ namespace CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransact
 {
     public class CreateTransactionCommand : IRequest<Response<List<F5sVoucherCode>>>
     {
+        public string channel { get; set; }
         public string productCode { get; set; }
         public int quantity { get; set; }
         public string transactionId { get; set; }
@@ -50,14 +51,16 @@ namespace CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransact
             {
                 _cache.TryGetValue("ProductCache", out products);
                 if (products is null) return new Response<List<F5sVoucherCode>>(false, null, "No data found");
-                var p = products.SingleOrDefault(x => x.Code.Equals(request.productCode));
+                var p = products.SingleOrDefault(x => x.ProductCode.Equals(request.productCode));
                 if (p is null) return new Response<List<F5sVoucherCode>>(false, null, "No data found");
                 if (p.Partner.Equals("URBOX"))
                 {
                     var urboxBuyInfo = _mapper.Map<UrboxBuyVoucherReq>(request, opt => opt.AfterMap((s, d) =>
                     {
+                        d.channel = request.channel;
+                        d.productPriceId = p.ProductId;
                         d.productPrice = p.Price;
-                        d.productCode = p.Code;
+                        d.productCode = p.ProductCode;
                         d.productType = p.Type;
                         d.dataBuy = new List<UrboxBuyVoucherReq.UrboxBuyVoucherItem>();
                     }));
@@ -74,9 +77,10 @@ namespace CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransact
                 {
                     var gotItBuyInfo = _mapper.Map<GotItBuyVoucherReq>(request, opt => opt.AfterMap((s, d) =>
                     {
+                        d.channel = request.channel;
                         d.productId = p.ProductId;
                         d.productPriceId = p.Size;
-                        d.productCode = p.Code;
+                        d.productCode = p.ProductCode;
                         d.productPrice = p.Price;
                     }));
                     var gotItBuy = await _gotItClient.BuyVoucherAsync(gotItBuyInfo);

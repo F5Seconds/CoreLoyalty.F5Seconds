@@ -37,7 +37,8 @@ namespace CoreLoyalty.F5Seconds.Urbox.Consumer
         }
         public async Task Consume(ConsumeContext<UrboxTransactionResponse> context)
         {
-            var response = await _urboxHttpClient.VoucherTransCheck(new UrboxTransCheckReq() { transaction_id = context.Message.TransactionId });
+            var transResponse = context.Message;
+            var response = await _urboxHttpClient.VoucherTransCheck(new UrboxTransCheckReq() { transaction_id = transResponse.TransactionId });
             if (response.Succeeded && response.Data.done.Equals(1))
             {
                 string rabbitHost = _config[RabbitMqAppSettingConst.Host];
@@ -53,6 +54,9 @@ namespace CoreLoyalty.F5Seconds.Urbox.Consumer
                 var endPoint = await _bus.GetSendEndpoint(uri);
                 foreach (var item in response.Data.data.detail)
                 {
+                    item.channel = transResponse.Channel;
+                    item.transactionId = transResponse.TransactionId;
+                    item.productCode = transResponse.ProductCode;
                     await endPoint.Send(item);
                 }
             }

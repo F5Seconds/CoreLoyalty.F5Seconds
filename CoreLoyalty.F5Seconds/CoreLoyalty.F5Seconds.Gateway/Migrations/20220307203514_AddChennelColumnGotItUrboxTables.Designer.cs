@@ -3,14 +3,16 @@ using System;
 using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220307203514_AddChennelColumnGotItUrboxTables")]
+    partial class AddChennelColumnGotItUrboxTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -150,11 +152,11 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("Payload")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ProductCode")
-                        .HasColumnType("longtext");
-
                     b.Property<float>("ProductPrice")
                         .HasColumnType("float");
+
+                    b.Property<string>("PropductCode")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("StateText")
                         .HasColumnType("longtext");
@@ -410,11 +412,11 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("Pin")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ProductCode")
-                        .HasColumnType("longtext");
-
                     b.Property<float>("ProductPrice")
                         .HasColumnType("float");
+
+                    b.Property<string>("PropductCode")
+                        .HasColumnType("longtext");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");

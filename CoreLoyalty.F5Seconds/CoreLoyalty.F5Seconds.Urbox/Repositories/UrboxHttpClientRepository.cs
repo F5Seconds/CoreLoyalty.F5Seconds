@@ -50,7 +50,8 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
         public async Task<Application.Wrappers.Response<List<F5sVoucherCode>>> BuyVoucherAsync(UrboxBuyVoucherReq voucher)
         {
             string payloadBuyVoucher = JsonConvert.SerializeObject(voucher, Formatting.Indented);
-            var transReq = _mapper.Map<UrboxTransactionRequest>(voucher,opt => opt.AfterMap((s,d) => { 
+            var transReq = _mapper.Map<UrboxTransactionRequest>(voucher,opt => opt.AfterMap((s,d) => {
+                d.Channel = voucher.channel;
                 d.Partner = _partner; 
                 d.Payload = payloadBuyVoucher;
             }));
@@ -74,7 +75,7 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
                         Message = result.msg,
                         Partner = _partner,
                         TransactionId = transReq.TransactionId,
-                        ProductId = transReq.PropductId,
+                        ProductCode = transReq.PropductCode,
                         Payload = jsonString,
                         Created = DateTime.Now
                     });
@@ -94,7 +95,7 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
                 Message = errorStr,
                 Partner = _partner,
                 TransactionId = transReq.TransactionId,
-                ProductId = transReq.PropductId,
+                ProductCode = transReq.PropductCode,
                 Created = DateTime.Now
             });
 
@@ -119,11 +120,12 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
                 bool expried = DateTime.TryParseExact(v.expired, "dd/MM/yyyy", CultureInfo.CurrentCulture, DateTimeStyles.None,out DateTime expiryDate);
                 endPoint.Send(new UrboxTransactionResponse()
                 {
+                    Channel = vReq.channel,
                     Created = DateTime.Now,
                     CustomerPhone = vReq.ttphone,
                     ExpiryDate = expried ? expiryDate : null,
                     ProductPrice = vReq.productPrice,
-                    PropductId = vReq.productCode,
+                    ProductCode = vReq.productCode,
                     TransactionId = vReq.transaction_id,
                     VoucherCode = v.code,
                     Payload = payload,

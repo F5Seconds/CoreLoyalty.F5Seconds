@@ -2,26 +2,19 @@
 
 namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 {
-    public partial class AddColumnGotItTransResTable : Migration
+    public partial class AddChennelColumnGotItUrboxTables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "StateText",
-                table: "GotItTransactionResponses",
+                name: "Channel",
+                table: "UrboxTransactionResponses",
                 type: "longtext",
                 nullable: true)
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.AddColumn<string>(
-                name: "UsedBrand",
-                table: "GotItTransactionResponses",
-                type: "longtext",
-                nullable: true)
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.AddColumn<string>(
-                name: "UsedTime",
+                name: "Channel",
                 table: "GotItTransactionResponses",
                 type: "longtext",
                 nullable: true)
@@ -31,15 +24,11 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "StateText",
-                table: "GotItTransactionResponses");
+                name: "Channel",
+                table: "UrboxTransactionResponses");
 
             migrationBuilder.DropColumn(
-                name: "UsedBrand",
-                table: "GotItTransactionResponses");
-
-            migrationBuilder.DropColumn(
-                name: "UsedTime",
+                name: "Channel",
                 table: "GotItTransactionResponses");
         }
     }

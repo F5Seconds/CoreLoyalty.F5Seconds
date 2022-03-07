@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220303030411_AddColumnGotItTransResTable")]
-    partial class AddColumnGotItTransResTable
+    [Migration("20220307093454_InitialTables")]
+    partial class InitialTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,6 +24,9 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    b.Property<string>("Channel")
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime(6)");
@@ -49,7 +52,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("Payload")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("PropductId")
+                    b.Property<string>("ProductCode")
                         .HasColumnType("longtext");
 
                     b.Property<int>("Quantity")
@@ -81,6 +84,9 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("longtext");
 
+                    b.Property<int>("GotItTransactionRequestId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime(6)");
 
@@ -96,7 +102,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("Payload")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ProductId")
+                    b.Property<string>("ProductCode")
                         .HasColumnType("longtext");
 
                     b.Property<string>("TransactionId")
@@ -146,7 +152,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<float>("ProductPrice")
                         .HasColumnType("float");
 
-                    b.Property<string>("PropductId")
+                    b.Property<string>("PropductCode")
                         .HasColumnType("longtext");
 
                     b.Property<string>("StateText")
@@ -196,9 +202,6 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("BrandName")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("longtext");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime(6)");
 
@@ -223,6 +226,9 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<float>("Price")
                         .HasColumnType("float");
 
+                    b.Property<string>("ProductCode")
+                        .HasColumnType("longtext");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
@@ -245,6 +251,9 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    b.Property<string>("Channel")
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime(6)");
@@ -270,7 +279,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("Payload")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("PropductId")
+                    b.Property<string>("PropductCode")
                         .HasColumnType("longtext");
 
                     b.Property<int>("Quantity")
@@ -317,7 +326,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("Payload")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ProductId")
+                    b.Property<string>("ProductCode")
                         .HasColumnType("longtext");
 
                     b.Property<string>("TransactionId")
@@ -358,6 +367,12 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("CustomerPhone")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Delivery")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DeliveryCode")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("DeliveryNote")
                         .HasColumnType("longtext");
 
@@ -394,7 +409,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<float>("ProductPrice")
                         .HasColumnType("float");
 
-                    b.Property<string>("PropductId")
+                    b.Property<string>("PropductCode")
                         .HasColumnType("longtext");
 
                     b.Property<int>("Status")
@@ -408,6 +423,9 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
+
+                    b.Property<string>("UsedTime")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("VoucherCode")
                         .HasColumnType("longtext");

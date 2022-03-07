@@ -34,7 +34,7 @@ namespace CoreLoyalty.F5Seconds.Application.Features.F5s.Queries.GetVoucher
                 List<ProductMemory> products;
                 _cache.TryGetValue("ProductCache", out products);
                 if (products is null) return new Response<F5sVoucherDetail>(false,null,"Not found products");
-                var p = products.SingleOrDefault(x => x.Code.Equals(request.Id));
+                var p = products.SingleOrDefault(x => x.ProductCode.Equals(request.Id));
                 if (p is null) return new Response<F5sVoucherDetail>(false, null, "Not found product with id");
                 if (p.Partner.Equals("URBOX"))
                 {

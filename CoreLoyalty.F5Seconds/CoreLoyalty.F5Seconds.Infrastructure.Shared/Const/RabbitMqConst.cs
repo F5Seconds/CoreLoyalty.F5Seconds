@@ -14,6 +14,7 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Shared.Const
         public static string TransResFail { get; set; } = "RABBITMQ_TRANS_RES_FAIL";
         public static string VoucherNotUsed { get; set; } = "RABBITMQ_VOUCHER_NOTUSE";
         public static string VoucherUpdateStatus { get; set; } = "RABBITMQ_VOUCHER_UPDATESTATUS";
+        public static string ChannelUpdateState { get; set; } = "RABBITMQ_CHANNEL_UPATE_STATE";
         public static Uri FormatUriRabbitMq(int queueType, bool isProduction, IConfiguration _config)
         {
             string rabbitHost = _config["RabbitMqSettings:Host"];
@@ -52,5 +53,6 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Shared.Const
         public static string TransResFail { get; set; } = "RabbitMqSettings:transactionResFailQueue";
         public static string VoucherNotUsed { get; set; } = "RabbitMqSettings:voucherNotUsedQueue";
         public static string VoucherUpdateStatus { get; set; } = "RabbitMqSettings:voucherUpdateStatusQueue";
+        public static string ChannelUpdateState { get; set; } = "RabbitMqSettings:channelUpdateStateQueue";
     }
 }

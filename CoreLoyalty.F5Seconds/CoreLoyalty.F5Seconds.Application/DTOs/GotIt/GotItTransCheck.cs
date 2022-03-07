@@ -12,6 +12,9 @@
         public GotItTransCheckResVoucher voucher { get; set; }
         public class GotItTransCheckResVoucher
         {
+            public string channel { get; set; }
+            public string transactionId { get; set; }
+            public string productCode { get; set; }
             public string voucherCode { get; set; }
             public string expiryDate { get; set; }
             public int stateCode { get; set; }

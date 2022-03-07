@@ -29,8 +29,8 @@ namespace CoreLoyalty.F5Seconds.GotIt.Consumer
         }
         public async Task Consume(ConsumeContext<GotItTransactionResponse> context)
         {
-            
-            var response = await _gotItHttpClient.VoucherTransCheck(new GotItTransCheckReq() { voucherRefId = context.Message.TransactionId});
+            var transRes = context.Message;
+            var response = await _gotItHttpClient.VoucherTransCheck(new GotItTransCheckReq() { voucherRefId = transRes.TransactionId});
             if (response.Succeeded && response.Data.voucher is not null)
             {
                 string rabbitHost = _config[RabbitMqAppSettingConst.Host];
@@ -44,6 +44,9 @@ namespace CoreLoyalty.F5Seconds.GotIt.Consumer
                 }
                 Uri uri = new Uri($"rabbitmq://{rabbitHost}/{rabbitvHost}/{voucherUpdateStatus}");
                 var endPoint = await _bus.GetSendEndpoint(uri);
+                response.Data.voucher.channel = transRes.TransactionId;
+                response.Data.voucher.productCode = transRes.ProductCode;
+                response.Data.voucher.channel = transRes.TransactionId;
                 await endPoint.Send(response.Data.voucher);   
             }
         }

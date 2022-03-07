@@ -20,7 +20,7 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories
         public Task<bool> IsUniqueBarcodeAsync(string code)
         {
             return _products
-                .AllAsync(p => p.Code != code);
+                .AllAsync(p => p.ProductCode != code);
         }
 
         public async Task<Product> IsUniqueProductAsync(int id, string partner, int size)
