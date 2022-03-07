@@ -27,6 +27,8 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
         private readonly IWebHostEnvironment _env;
         private readonly IBus _bus;
         private string _partner = "URBOX";
+        private string AppId = "";
+        private string AppSecret = "";
         public UrboxHttpClientRepository(HttpClient client, IConfiguration config, IMapper mapper, IWebHostEnvironment env, IBus bus)
         {
             _bus = bus;
@@ -34,6 +36,16 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
             _config = config;
             _mapper = mapper;
             _env = env;
+            if (_env.IsDevelopment())
+            {
+                AppId = _config["Urbox:AppId"];
+                AppSecret = _config["Urbox:AppSecret"];
+            }
+            if (_env.IsProduction())
+            {
+                AppId = Environment.GetEnvironmentVariable("URBOX_APPID");
+                AppSecret = Environment.GetEnvironmentVariable("URBOX_APPSECRET");
+            }
         }
         public async Task<Application.Wrappers.Response<List<F5sVoucherCode>>> BuyVoucherAsync(UrboxBuyVoucherReq voucher)
         {
@@ -47,7 +59,7 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
             var resFailEndpoint = await _bus.GetSendEndpoint(RabbitMqEnvConst.FormatUriRabbitMq(3, _env.IsProduction(), _config));
             
             var content = new StringContent(payloadBuyVoucher, Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync($"/2.0/cart/cartPayVoucher?app_id={_config["Urbox:AppId"]}&app_secret={_config["Urbox:AppSecret"]}", content);
+            var response = await _client.PostAsync($"/2.0/cart/cartPayVoucher?app_id={AppId}&app_secret={AppSecret}", content);
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
@@ -137,7 +149,7 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
 
         public async Task<Application.Wrappers.Response<F5sVoucherDetail>> VoucherDetailAsync(int id)
         {
-            var response = await _client.GetAsync($"/4.0/gift/detail?app_id={_config["Urbox:AppId"]}&app_secret={_config["Urbox:AppSecret"]}&lang=vi&id={id}");
+            var response = await _client.GetAsync($"/4.0/gift/detail?app_id={AppId}&app_secret={AppSecret}&lang=vi&id={id}");
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
@@ -149,7 +161,7 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
 
         public async Task<Application.Wrappers.Response<List<F5sVoucherBase>>> VoucherListAsync()
         {
-            var response = await _client.GetAsync($"/4.0/gift/lists?app_id={_config["Urbox:AppId"]}&app_secret={_config["Urbox:AppSecret"]}");
+            var response = await _client.GetAsync($"/4.0/gift/lists?app_id={AppId}&app_secret={AppSecret}");
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
@@ -170,7 +182,7 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
         {
             string payloadTransCheck = JsonConvert.SerializeObject(payload, Formatting.Indented);
             var content = new StringContent(payloadTransCheck, Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync($"/2.0/cart/getByTransaction?app_id={_config["Urbox:AppId"]}&app_secret={_config["Urbox:AppSecret"]}", content);
+            var response = await _client.PostAsync($"/2.0/cart/getByTransaction?app_id={AppId}&app_secret={AppSecret}", content);
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();

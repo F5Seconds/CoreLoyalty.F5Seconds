@@ -19,6 +19,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Controllers
         {
             _cache = cache;
         }
+
         [HttpGet("fake-trans")]
         public async Task<IActionResult> GetGotItVouchers()
         {
@@ -31,7 +32,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Controllers
             {
                 customerId = "341721226",
                 customerPhone = "0979999067",
-                propductId = p.Code,
+                productCode = p.Code,
                 quantity = 1,
                 transactionId = Guid.NewGuid().ToString()
             });
@@ -47,7 +48,7 @@ namespace CoreLoyalty.F5Seconds.Gateway.Controllers
         [HttpGet("voucher/{id}")]
         public async Task<IActionResult> GetMemoryVouchers(string id)
         {
-            return Ok(await Mediator.Send(new GetF5sVoucherQuery() { Id = id}));
+            return Ok(await Mediator.Send(new GetF5sVoucherQuery() { Id = id }));
         }
 
         [HttpPost("transaction")]

@@ -6,7 +6,7 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Shared.Const
     public static class RabbitMqEnvConst
     {
         public static string Host { get; set; } = "RABBITMQ_HOST";
-        public static string Vhost { get; set; } = "RABBITMQ_USER";
+        public static string Vhost { get; set; } = "RABBITMQ_VHOST";
         public static string User { get; set; } = "RABBITMQ_USER";
         public static string Pass { get; set; } = "RABBITMQ_PASS";
         public static string TransRequest { get; set; } = "RABBITMQ_TRANS_REQUEST";

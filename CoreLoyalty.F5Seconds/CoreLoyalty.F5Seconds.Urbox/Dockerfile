@@ -11,16 +11,14 @@ USER appuser
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-focal AS build
 WORKDIR /src
-COPY ["CoreLoyalty.F5Seconds.Urbox.csproj", "/"]
+COPY ["CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.Urbox/CoreLoyalty.F5Seconds.Urbox.csproj", "/"]
 COPY . .
 WORKDIR "/src"
 
 FROM build AS publish
-RUN dotnet publish "CoreLoyalty.F5Seconds.Urbox.csproj" -c Release -o /app/publish
+RUN dotnet publish "CoreLoyalty.F5Seconds/CoreLoyalty.F5Seconds.Urbox/CoreLoyalty.F5Seconds.Urbox.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ADD ocelot.json /app/
-ADD ocelot.Production.json /app/
 ENTRYPOINT ["dotnet", "CoreLoyalty.F5Seconds.Urbox.dll"]

@@ -35,7 +35,7 @@ namespace CoreLoyalty.F5Seconds.Application.Mappings
 
             #region Urbox destination
             CreateMap<CreateTransactionCommand, UrboxBuyVoucherReq>()
-                .ForMember(d => d.productCode, m => m.MapFrom(s => s.propductId))
+                .ForMember(d => d.productCode, m => m.MapFrom(s => s.productCode))
                 .ForMember(d => d.transaction_id, m => m.MapFrom(s => s.transactionId))
                 .ForMember(d => d.site_user_id, m => m.MapFrom(s => s.customerId))
                 .ForMember(d => d.ttphone, m => m.MapFrom(s => s.customerPhone));
@@ -63,7 +63,7 @@ namespace CoreLoyalty.F5Seconds.Application.Mappings
             CreateMap<CreateTransactionCommand, GotItTransactionRequest>()
                 .ForMember(d => d.TransactionId, m => m.MapFrom(s => s.transactionId))
                 .ForMember(d => d.CustomerId, m => m.MapFrom(s => s.customerId))
-                .ForMember(d => d.PropductId, m => m.MapFrom(s => s.propductId))
+                .ForMember(d => d.PropductId, m => m.MapFrom(s => s.productCode))
                 .ForMember(d => d.Quantity, m => m.MapFrom(s => s.quantity))
                 .ForMember(d => d.CustomerPhone, m => m.MapFrom(s => s.customerPhone))
                 .ForMember(d => d.Created, m => m.MapFrom(s => DateTime.Now));
