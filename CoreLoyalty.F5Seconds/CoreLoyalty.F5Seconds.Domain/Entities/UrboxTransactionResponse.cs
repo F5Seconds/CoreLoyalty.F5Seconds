@@ -12,6 +12,7 @@ namespace CoreLoyalty.F5Seconds.Domain.Entities
         public string VoucherCode { get; set; }
         public string Pin { get; set; }
         public DateTime? ExpiryDate { get; set; }
+        public string UsedTime { get; set; }
         public int Status { get; set; }
         public string DeliveryNote { get; set; }
         public string Payload { get; set; }
@@ -21,6 +22,8 @@ namespace CoreLoyalty.F5Seconds.Domain.Entities
         public int? CodeDisplayType { get; set; }
         public string Token { get; set; }
         public string EstimateDelivery { get; set; }
+        public string Delivery { get; set; }
+        public string DeliveryCode { get; set; }
         /// <summary> Type product
         /// 1: Voucher tiền mặt
         /// 2: Giftset

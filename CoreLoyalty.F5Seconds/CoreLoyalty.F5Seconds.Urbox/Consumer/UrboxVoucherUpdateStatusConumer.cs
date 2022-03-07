@@ -20,6 +20,7 @@ namespace CoreLoyalty.F5Seconds.Urbox.Consumer
             {
                 voucher.Status = message.deliveryCode??0;
                 voucher.DeliveryNote = message.delivery_note;
+                voucher.UsedTime = message.using_time;
                 await _urboxTransRes.UpdateAsync(voucher);
             }
         }

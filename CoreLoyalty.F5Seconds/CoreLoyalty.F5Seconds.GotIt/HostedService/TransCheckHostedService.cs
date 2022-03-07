@@ -52,13 +52,11 @@ namespace CoreLoyalty.F5Seconds.GotIt.HostedService
             string rabbitHost = _config[RabbitMqAppSettingConst.Host];
             string rabbitvHost = _config[RabbitMqAppSettingConst.Vhost];
             string voucherNotUse = _config[RabbitMqAppSettingConst.VoucherNotUsed];
-            string voucherUpdateStatus = _config[RabbitMqAppSettingConst.VoucherUpdateStatus];
             if (_env.IsProduction())
             {
                 rabbitHost = Environment.GetEnvironmentVariable(RabbitMqEnvConst.Host);
                 rabbitvHost = Environment.GetEnvironmentVariable(RabbitMqEnvConst.Vhost);
                 voucherNotUse = Environment.GetEnvironmentVariable(RabbitMqEnvConst.VoucherNotUsed);
-                voucherUpdateStatus = Environment.GetEnvironmentVariable(RabbitMqEnvConst.VoucherUpdateStatus);
             }
             using (var scope = _service.CreateScope())
             {
