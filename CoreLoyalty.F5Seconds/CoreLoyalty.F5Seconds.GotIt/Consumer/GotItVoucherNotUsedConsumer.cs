@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 
@@ -19,6 +20,7 @@ namespace CoreLoyalty.F5Seconds.GotIt.Consumer
         private readonly IBus _bus;
         private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
+        public Random r = new Random();
         public GotItVoucherNotUsedConsumer(IGotItHttpClientService gotItHttpClient, ILogger<GotItVoucherNotUsedConsumer> logger, IBus bus, IConfiguration config, IWebHostEnvironment env)
         {
             _gotItHttpClient = gotItHttpClient; 
@@ -44,9 +46,11 @@ namespace CoreLoyalty.F5Seconds.GotIt.Consumer
                 }
                 Uri uri = new Uri($"rabbitmq://{rabbitHost}/{rabbitvHost}/{voucherUpdateStatus}");
                 var endPoint = await _bus.GetSendEndpoint(uri);
-                response.Data.voucher.channel = transRes.TransactionId;
+                response.Data.voucher.channel = transRes.Channel;
                 response.Data.voucher.productCode = transRes.ProductCode;
-                response.Data.voucher.channel = transRes.TransactionId;
+                response.Data.voucher.transactionId = transRes.TransactionId;
+                response.Data.voucher.stateCode = r.Next(0,9);
+                response.Data.voucher.used_time = DateTime.Now.ToString("dd/MM/yyyy");
                 await endPoint.Send(response.Data.voucher);   
             }
         }

@@ -11,6 +11,8 @@ using Microsoft.Extensions.Hosting;
 using System;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CoreLoyalty.F5Seconds.Urbox.Consumer
 {
@@ -21,6 +23,7 @@ namespace CoreLoyalty.F5Seconds.Urbox.Consumer
         private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
         private readonly ILogger<UrboxVoucherNotUsedConsumer> _logger;
+        public Random r = new Random();
         public UrboxVoucherNotUsedConsumer(
             IUrboxHttpClientService urboxHttpClient, 
             IConfiguration config, 
@@ -54,12 +57,24 @@ namespace CoreLoyalty.F5Seconds.Urbox.Consumer
                 var endPoint = await _bus.GetSendEndpoint(uri);
                 foreach (var item in response.Data.data.detail)
                 {
+                    item.deliveryCode = r.Next(0, 11);
+                    item.using_time = DateTime.Now.ToString("dd/MM/yyyy");
                     item.channel = transResponse.Channel;
                     item.transactionId = transResponse.TransactionId;
                     item.productCode = transResponse.ProductCode;
                     await endPoint.Send(item);
                 }
             }
+        }
+
+        private int GiveMeANumber()
+        {
+            var exclude = new HashSet<int>() { 3, 5 };
+            var range = Enumerable.Range(1, 11).Where(i => !exclude.Contains(i));
+
+            var rand = new Random();
+            int index = rand.Next(1, 11 - exclude.Count);
+            return range.ElementAt(index);
         }
     }
 }

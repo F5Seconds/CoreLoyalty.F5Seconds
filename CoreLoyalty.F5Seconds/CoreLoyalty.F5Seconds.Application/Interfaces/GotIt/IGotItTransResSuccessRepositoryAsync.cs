@@ -7,6 +7,6 @@ namespace CoreLoyalty.F5Seconds.Application.Interfaces.GotIt.Repositories
     public interface IGotItTransResSuccessRepositoryAsync : IGenericRepositoryAsync<GotItTransactionResponse>
     {
         Task<List<GotItTransactionResponse>> ListVoucherNotUsed();
-        Task<GotItTransactionResponse> FindByVoucherCode(string code);
+        Task<GotItTransactionResponse> FindByCodeAndTransId(string code,string transId);
     }
 }

@@ -17,14 +17,14 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories.GotIt
             _gotItTransactionResponses = dbContext.Set<GotItTransactionResponse>();
         }
 
-        public async Task<GotItTransactionResponse> FindByVoucherCode(string code)
+        public async Task<GotItTransactionResponse> FindByCodeAndTransId(string code,string transId)
         {
-            return await _gotItTransactionResponses.SingleOrDefaultAsync(x => x.VoucherCode.Equals(code));
+            return await _gotItTransactionResponses.SingleOrDefaultAsync(x => x.VoucherCode.Equals(code) && x.TransactionId.Equals(transId));
         }
 
         public async Task<List<GotItTransactionResponse>> ListVoucherNotUsed()
         {
-            int[] notUsed = {0,1,2,3,4};
+            int[] notUsed = { 0, 1, 2, 3, 5,6, 7 };
             return await _gotItTransactionResponses.Where(x => notUsed.Contains(x.Status)).ToListAsync();
         }
     }

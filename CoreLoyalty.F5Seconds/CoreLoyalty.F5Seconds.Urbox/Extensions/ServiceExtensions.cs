@@ -95,7 +95,7 @@ namespace CoreLoyalty.F5Seconds.Urbox.Extensions
 
         public static void AddHostedService(this IServiceCollection services)
         {
-            //services.AddHostedService<TransCheckHostedService>();
+            services.AddHostedService<TransCheckHostedService>();
         }
 
         public static void AddRabbitMqExtension(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)

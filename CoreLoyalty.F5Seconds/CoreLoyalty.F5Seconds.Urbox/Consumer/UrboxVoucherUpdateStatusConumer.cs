@@ -15,9 +15,9 @@ namespace CoreLoyalty.F5Seconds.Urbox.Consumer
 {
     public class UrboxVoucherUpdateStatusConumer : IConsumer<UrboxTransCheckResDataDetail>
     {
-        private int[] NotUse = { 1,6,7,8,10 };
-        private int[] Used = { 2 };
-        private int[] Expired = { 4 };
+        private int[] NotUse = { 0,1,6,7,8,10 };
+        private int[] Used = { 2,3 };
+        private int[] Expired = { 4,5 };
         private int[] Canceled = { 9,11 };
         private readonly IUrboxTransResSuccessRepositoryAsync _urboxTransRes;
         string rabbitHost = "";
@@ -52,7 +52,7 @@ namespace CoreLoyalty.F5Seconds.Urbox.Consumer
         public async Task Consume(ConsumeContext<UrboxTransCheckResDataDetail> context)
         {
             var message = context.Message;
-            var voucher = await _urboxTransRes.FindByVoucherCode(message.code);
+            var voucher = await _urboxTransRes.FindByCodeAndTransId(message.code,message.transactionId);
             if (voucher is not null)
             {
                 voucher.Status = message.deliveryCode??0;

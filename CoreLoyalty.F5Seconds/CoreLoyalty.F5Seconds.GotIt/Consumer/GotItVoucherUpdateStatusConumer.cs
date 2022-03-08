@@ -16,7 +16,7 @@ namespace CoreLoyalty.F5Seconds.GotIt.Consumer
     public class GotItVoucherUpdateStatusConumer : IConsumer<GotItTransCheckResVoucher>
     {
         private readonly IGotItTransResSuccessRepositoryAsync _gotItTransRes;
-        private int[] NotUse =  { 0,1,2,3 };
+        private int[] NotUse =  { 0,1,2,3,5,6,7 };
         private int[] Used = { 4 };
         private int[] Expired = { 8 };
         private int[] Canceled = { 9 };
@@ -52,7 +52,7 @@ namespace CoreLoyalty.F5Seconds.GotIt.Consumer
         public async Task Consume(ConsumeContext<GotItTransCheckResVoucher> context)
         {
             var message = context.Message;
-            var voucher = await _gotItTransRes.FindByVoucherCode(message.voucherCode);
+            var voucher = await _gotItTransRes.FindByCodeAndTransId(message.voucherCode,message.transactionId);
             if(voucher is not null)
             {
                 voucher.Status = message.stateCode;

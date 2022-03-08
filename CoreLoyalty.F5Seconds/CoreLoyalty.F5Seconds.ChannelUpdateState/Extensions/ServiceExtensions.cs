@@ -1,4 +1,6 @@
 ﻿using CoreLoyalty.F5Seconds.ChannelUpdateState.Consumer;
+using CoreLoyalty.F5Seconds.ChannelUpdateState.Interfaces;
+using CoreLoyalty.F5Seconds.ChannelUpdateState.Repository;
 using CoreLoyalty.F5Seconds.Infrastructure.Shared.Const;
 using GreenPipes;
 using MassTransit;
@@ -12,6 +14,17 @@ namespace CoreLoyalty.F5Seconds.ChannelUpdateState.Extensions
 {
     public static class ServiceExtensions
     {
+        public static void AddHttpClientExtension(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
+        {
+            string vietCapitaltUri = configuration["PartnerUri:VietCapital"];
+            if (env.IsProduction())
+            {
+                vietCapitaltUri = Environment.GetEnvironmentVariable("PARTNER_URI_VIETCAPITAL");
+            }
+            services.AddHttpClient<IVietCapitalHttpClientService, VietCapitalHttpClientRepository>(c => {
+                c.BaseAddress = new Uri(vietCapitaltUri);
+            });
+        }
         public static void AddRabbitMqExtension(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
         {
             string rabbitHost = configuration[RabbitMqAppSettingConst.Host];

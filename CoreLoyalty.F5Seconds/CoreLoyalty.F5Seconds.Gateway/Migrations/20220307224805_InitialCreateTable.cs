@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 {
-    public partial class InitialTables : Migration
+    public partial class InitialCreateTable : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -84,9 +84,11 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Channel = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     TransactionId = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PropductCode = table.Column<string>(type: "longtext", nullable: true)
+                    ProductCode = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ProductPrice = table.Column<float>(type: "float", nullable: false),
                     CustomerPhone = table.Column<string>(type: "longtext", nullable: true)
@@ -237,9 +239,11 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Channel = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     TransactionId = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PropductCode = table.Column<string>(type: "longtext", nullable: true)
+                    ProductCode = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ProductPrice = table.Column<float>(type: "float", nullable: false),
                     CustomerPhone = table.Column<string>(type: "longtext", nullable: true)

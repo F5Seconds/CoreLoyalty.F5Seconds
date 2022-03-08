@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220307093454_InitialTables")]
-    partial class InitialTables
+    [Migration("20220307224805_InitialCreateTable")]
+    partial class InitialCreateTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -125,6 +125,9 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("BrandName")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Channel")
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime(6)");
 
@@ -149,11 +152,11 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("Payload")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("ProductCode")
+                        .HasColumnType("longtext");
+
                     b.Property<float>("ProductPrice")
                         .HasColumnType("float");
-
-                    b.Property<string>("PropductCode")
-                        .HasColumnType("longtext");
 
                     b.Property<string>("StateText")
                         .HasColumnType("longtext");
@@ -346,6 +349,9 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Channel")
+                        .HasColumnType("longtext");
+
                     b.Property<int?>("CityId")
                         .HasColumnType("int");
 
@@ -406,11 +412,11 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("Pin")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("ProductCode")
+                        .HasColumnType("longtext");
+
                     b.Property<float>("ProductPrice")
                         .HasColumnType("float");
-
-                    b.Property<string>("PropductCode")
-                        .HasColumnType("longtext");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");

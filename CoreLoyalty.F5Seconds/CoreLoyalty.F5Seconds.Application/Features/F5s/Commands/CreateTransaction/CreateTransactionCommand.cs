@@ -69,7 +69,6 @@ namespace CoreLoyalty.F5Seconds.Application.Features.F5s.Commands.CreateTransact
                         priceId = p.ProductId,
                         quantity = request.quantity
                     });
-                    urboxBuyInfo.transaction_id = "00000000967";
                     var urboxBuy = await _urboxClient.BuyVoucherAsync(urboxBuyInfo);
                     return urboxBuy;
                 }

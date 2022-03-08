@@ -7,6 +7,6 @@ namespace CoreLoyalty.F5Seconds.Application.Interfaces.Urbox.Repositories
     public interface IUrboxTransResSuccessRepositoryAsync : IGenericRepositoryAsync<UrboxTransactionResponse>
     {
         Task<List<UrboxTransactionResponse>> ListVoucherNotUsed();
-        Task<UrboxTransactionResponse> FindByVoucherCode(string code);
+        Task<UrboxTransactionResponse> FindByCodeAndTransId(string code,string transId);
     }
 }
