@@ -3,14 +3,16 @@ using System;
 using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220316212643_AddTableCuaHang")]
+    partial class AddTableCuaHang
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,6 +112,9 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("CuaHangId")
+                        .HasColumnType("int");
+
                     b.Property<string>("DiaChi")
                         .HasColumnType("longtext");
 
@@ -142,6 +147,8 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CuaHangId");
+
                     b.HasIndex("PhuongXaId");
 
                     b.ToTable("ThuongHieus");
@@ -169,9 +176,6 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Ten")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("TenDayDu")
                         .HasColumnType("longtext");
 
                     b.Property<bool>("TrangThai")
@@ -203,9 +207,6 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Ten")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("TenDayDu")
                         .HasColumnType("longtext");
 
                     b.Property<int>("ThanhPhoId")
@@ -675,36 +676,6 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.ToTable("UrboxTransactionResponses");
                 });
 
-            modelBuilder.Entity("CuaHangProduct", b =>
-                {
-                    b.Property<int>("CuaHangsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CuaHangsId", "ProductsId");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("CuaHangProduct");
-                });
-
-            modelBuilder.Entity("CuaHangThuongHieu", b =>
-                {
-                    b.Property<int>("CuaHangsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ThuongHieusId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CuaHangsId", "ThuongHieusId");
-
-                    b.HasIndex("ThuongHieusId");
-
-                    b.ToTable("CuaHangThuongHieu");
-                });
-
             modelBuilder.Entity("LinhVucThuongHieu", b =>
                 {
                     b.Property<int>("LinhVucsId")
@@ -733,6 +704,10 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 
             modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.CuaHangs.ThuongHieu", b =>
                 {
+                    b.HasOne("CoreLoyalty.F5Seconds.Domain.Entities.CuaHangs.CuaHang", null)
+                        .WithMany("ThuongHieus")
+                        .HasForeignKey("CuaHangId");
+
                     b.HasOne("CoreLoyalty.F5Seconds.Domain.Entities.DiaChis.PhuongXa", "PhuongXa")
                         .WithMany()
                         .HasForeignKey("PhuongXaId")
@@ -764,36 +739,6 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Navigation("ThanhPho");
                 });
 
-            modelBuilder.Entity("CuaHangProduct", b =>
-                {
-                    b.HasOne("CoreLoyalty.F5Seconds.Domain.Entities.CuaHangs.CuaHang", null)
-                        .WithMany()
-                        .HasForeignKey("CuaHangsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CoreLoyalty.F5Seconds.Domain.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CuaHangThuongHieu", b =>
-                {
-                    b.HasOne("CoreLoyalty.F5Seconds.Domain.Entities.CuaHangs.CuaHang", null)
-                        .WithMany()
-                        .HasForeignKey("CuaHangsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CoreLoyalty.F5Seconds.Domain.Entities.CuaHangs.ThuongHieu", null)
-                        .WithMany()
-                        .HasForeignKey("ThuongHieusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("LinhVucThuongHieu", b =>
                 {
                     b.HasOne("CoreLoyalty.F5Seconds.Domain.Entities.CuaHangs.LinhVuc", null)
@@ -807,6 +752,11 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                         .HasForeignKey("ThuongHieusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.CuaHangs.CuaHang", b =>
+                {
+                    b.Navigation("ThuongHieus");
                 });
 
             modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.DiaChis.QuanHuyen", b =>

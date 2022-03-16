@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220307224805_InitialCreateTable")]
-    partial class InitialCreateTable
+    [Migration("20220316210145_AddTableDiaChi")]
+    partial class AddTableDiaChi
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -18,6 +18,103 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.5");
+
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.DiaChis.PhuongXa", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("QuanHuyenId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Ten")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("TrangThai")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuanHuyenId");
+
+                    b.ToTable("PhuongXas");
+                });
+
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.DiaChis.QuanHuyen", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Ten")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("ThanhPhoId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("TrangThai")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ThanhPhoId");
+
+                    b.ToTable("QuanHuyens");
+                });
+
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.DiaChis.ThanhPho", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Ten")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("TrangThai")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ThanhPhos");
+                });
 
             modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.GotItTransactionRequest", b =>
                 {
@@ -442,6 +539,38 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UrboxTransactionResponses");
+                });
+
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.DiaChis.PhuongXa", b =>
+                {
+                    b.HasOne("CoreLoyalty.F5Seconds.Domain.Entities.DiaChis.QuanHuyen", "QuanHuyen")
+                        .WithMany("PhuongXas")
+                        .HasForeignKey("QuanHuyenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("QuanHuyen");
+                });
+
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.DiaChis.QuanHuyen", b =>
+                {
+                    b.HasOne("CoreLoyalty.F5Seconds.Domain.Entities.DiaChis.ThanhPho", "ThanhPho")
+                        .WithMany("QuanHuyens")
+                        .HasForeignKey("ThanhPhoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ThanhPho");
+                });
+
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.DiaChis.QuanHuyen", b =>
+                {
+                    b.Navigation("PhuongXas");
+                });
+
+            modelBuilder.Entity("CoreLoyalty.F5Seconds.Domain.Entities.DiaChis.ThanhPho", b =>
+                {
+                    b.Navigation("QuanHuyens");
                 });
 #pragma warning restore 612, 618
         }

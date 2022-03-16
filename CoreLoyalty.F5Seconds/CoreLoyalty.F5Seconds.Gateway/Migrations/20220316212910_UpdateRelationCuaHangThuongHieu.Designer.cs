@@ -3,14 +3,16 @@ using System;
 using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220316212910_UpdateRelationCuaHangThuongHieu")]
+    partial class UpdateRelationCuaHangThuongHieu
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,9 +173,6 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("Ten")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("TenDayDu")
-                        .HasColumnType("longtext");
-
                     b.Property<bool>("TrangThai")
                         .HasColumnType("tinyint(1)");
 
@@ -203,9 +202,6 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Ten")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("TenDayDu")
                         .HasColumnType("longtext");
 
                     b.Property<int>("ThanhPhoId")
@@ -675,21 +671,6 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.ToTable("UrboxTransactionResponses");
                 });
 
-            modelBuilder.Entity("CuaHangProduct", b =>
-                {
-                    b.Property<int>("CuaHangsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CuaHangsId", "ProductsId");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("CuaHangProduct");
-                });
-
             modelBuilder.Entity("CuaHangThuongHieu", b =>
                 {
                     b.Property<int>("CuaHangsId")
@@ -762,21 +743,6 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                         .IsRequired();
 
                     b.Navigation("ThanhPho");
-                });
-
-            modelBuilder.Entity("CuaHangProduct", b =>
-                {
-                    b.HasOne("CoreLoyalty.F5Seconds.Domain.Entities.CuaHangs.CuaHang", null)
-                        .WithMany()
-                        .HasForeignKey("CuaHangsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CoreLoyalty.F5Seconds.Domain.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CuaHangThuongHieu", b =>

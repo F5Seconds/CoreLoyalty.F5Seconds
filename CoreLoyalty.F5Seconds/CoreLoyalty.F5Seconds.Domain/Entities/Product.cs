@@ -1,10 +1,15 @@
 ﻿using CoreLoyalty.F5Seconds.Domain.Common;
+using CoreLoyalty.F5Seconds.Domain.Entities.CuaHangs;
 using System.Collections.Generic;
 
 namespace CoreLoyalty.F5Seconds.Domain.Entities
 {
     public class Product : AuditableBaseEntity
     {
+        public Product()
+        {
+            CuaHangs = new HashSet<CuaHang>();
+        }
         public string ProductCode { get; set; }
         public int ProductId { get; set; }
         public string Name { get; set; }
@@ -16,5 +21,6 @@ namespace CoreLoyalty.F5Seconds.Domain.Entities
         public string BrandName { get; set; }
         public string BrandLogo { get; set; }
         public bool Status { get; set; }
+        public virtual ICollection<CuaHang> CuaHangs { get; set; }
     }
 }
