@@ -23,10 +23,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreLoyalty.F5Seconds.Infra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreLoyalty.F5Seconds.Infrastructure.Shared", "CoreLoyalty.F5Seconds\CoreLoyalty.F5Seconds.Infrastructure.Shared\CoreLoyalty.F5Seconds.Infrastructure.Shared.csproj", "{8823E39B-BEFE-4B79-A98E-57F19C7AAB2E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Customer", "Customer", "{5FE35BA0-C8A0-4BF4-8A49-8F5AEAC94272}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreLoyalty.F5Seconds.VietCapital", "CoreLoyalty.F5Seconds\CoreLoyalty.F5Seconds.VietCapital\CoreLoyalty.F5Seconds.VietCapital.csproj", "{5D1B810A-C893-43BA-9C1B-24AFAA0581ED}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Partner", "Partner", "{5F049C50-5986-44C4-ADD0-25091E3F04DD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreLoyalty.F5Seconds.Urbox", "CoreLoyalty.F5Seconds\CoreLoyalty.F5Seconds.Urbox\CoreLoyalty.F5Seconds.Urbox.csproj", "{C8B0F3D6-D3C5-4B3F-9E0E-0053E104DBC1}"
@@ -37,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreLoyalty.F5Seconds.Gatew
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreLoyalty.F5Seconds.Administrator", "CoreLoyalty.F5Seconds\CoreLoyalty.F5Seconds.Administrator\CoreLoyalty.F5Seconds.Administrator.csproj", "{76982060-FDC9-43FE-AECE-553A4CDF6543}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreLoyalty.F5Seconds.ChannelUpdateState", "CoreLoyalty.F5Seconds\CoreLoyalty.F5Seconds.ChannelUpdateState\CoreLoyalty.F5Seconds.ChannelUpdateState.csproj", "{7987C2F2-D2E5-468D-89E7-31C832448F05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreLoyalty.F5Seconds.ChannelUpdateState", "CoreLoyalty.F5Seconds\CoreLoyalty.F5Seconds.ChannelUpdateState\CoreLoyalty.F5Seconds.ChannelUpdateState.csproj", "{7987C2F2-D2E5-468D-89E7-31C832448F05}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,10 +65,6 @@ Global
 		{8823E39B-BEFE-4B79-A98E-57F19C7AAB2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8823E39B-BEFE-4B79-A98E-57F19C7AAB2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8823E39B-BEFE-4B79-A98E-57F19C7AAB2E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5D1B810A-C893-43BA-9C1B-24AFAA0581ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5D1B810A-C893-43BA-9C1B-24AFAA0581ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5D1B810A-C893-43BA-9C1B-24AFAA0581ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5D1B810A-C893-43BA-9C1B-24AFAA0581ED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C8B0F3D6-D3C5-4B3F-9E0E-0053E104DBC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C8B0F3D6-D3C5-4B3F-9E0E-0053E104DBC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8B0F3D6-D3C5-4B3F-9E0E-0053E104DBC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -107,8 +99,6 @@ Global
 		{47583FE0-7A58-474B-9A35-75C568208A8F} = {AA685FC5-F02C-4412-A6C9-1536298766AF}
 		{A2CB0510-183D-46A3-A8D7-166F39849E54} = {AA685FC5-F02C-4412-A6C9-1536298766AF}
 		{8823E39B-BEFE-4B79-A98E-57F19C7AAB2E} = {AA685FC5-F02C-4412-A6C9-1536298766AF}
-		{5FE35BA0-C8A0-4BF4-8A49-8F5AEAC94272} = {52CF94B1-82B8-4E7A-BD1E-0A452BB689CE}
-		{5D1B810A-C893-43BA-9C1B-24AFAA0581ED} = {5FE35BA0-C8A0-4BF4-8A49-8F5AEAC94272}
 		{5F049C50-5986-44C4-ADD0-25091E3F04DD} = {52CF94B1-82B8-4E7A-BD1E-0A452BB689CE}
 		{C8B0F3D6-D3C5-4B3F-9E0E-0053E104DBC1} = {5F049C50-5986-44C4-ADD0-25091E3F04DD}
 		{BEA85D28-8897-4902-A1F1-73323EAD656F} = {5F049C50-5986-44C4-ADD0-25091E3F04DD}
