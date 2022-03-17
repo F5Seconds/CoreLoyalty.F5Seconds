@@ -35,6 +35,7 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence
             #region Repositories
             services.AddTransient(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
             services.AddTransient<IProductRepositoryAsync, ProductRepositoryAsync>();
+            services.AddTransient<IMaLoiRepositoryAsync, MaLoiRepositoryAsync>();
 
             services.AddTransient<IGotItTransReqRepositoryAsync, GotItTransReqRepositoryAsync>();
             services.AddTransient<IGotItTransResSuccessRepositoryAsync, GotItTransResSuccessRepositoryAsync>();

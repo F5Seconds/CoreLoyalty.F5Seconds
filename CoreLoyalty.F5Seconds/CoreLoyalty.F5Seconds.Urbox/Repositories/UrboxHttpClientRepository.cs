@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using CoreLoyalty.F5Seconds.Application.DTOs.F5seconds;
 using CoreLoyalty.F5Seconds.Application.DTOs.Urox;
+using CoreLoyalty.F5Seconds.Application.Interfaces.Repositories;
+using CoreLoyalty.F5Seconds.Domain.Const;
 using CoreLoyalty.F5Seconds.Domain.Entities;
 using CoreLoyalty.F5Seconds.Infrastructure.Shared.Const;
 using CoreLoyalty.F5Seconds.Urbox.Interfaces;
@@ -8,6 +10,7 @@ using MassTransit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -25,17 +28,28 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _env;
+        private readonly ILogger<UrboxHttpClientRepository> _logger;
         private readonly IBus _bus;
         private string _partner = "URBOX";
         private string AppId = "";
         private string AppSecret = "";
-        public UrboxHttpClientRepository(HttpClient client, IConfiguration config, IMapper mapper, IWebHostEnvironment env, IBus bus)
+        private readonly IMaLoiRepositoryAsync _maLoiRepository;
+        public UrboxHttpClientRepository(
+            HttpClient client, 
+            IConfiguration config, 
+            IMapper mapper, 
+            IWebHostEnvironment env, 
+            IBus bus, 
+            IMaLoiRepositoryAsync maLoiRepository,
+            ILogger<UrboxHttpClientRepository> logger)
         {
             _bus = bus;
             _client = client;
             _config = config;
             _mapper = mapper;
             _env = env;
+            _maLoiRepository = maLoiRepository;
+            _logger = logger;
             if (_env.IsDevelopment())
             {
                 AppId = _config["Urbox:AppId"];
@@ -67,11 +81,12 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
                 var result = JsonConvert.DeserializeObject<UrboxMessageBase>(jsonString);
                 if (result is not null && result.done.Equals(0))
                 {
+                    _logger.LogError($"!!@@##$$*****ERROR: {JsonConvert.SerializeObject(result)}");
                     transReq.Status = 0;
                     await requestEndpoint.Send(transReq);
                     await resFailEndpoint.Send(new UrboxTransactionResFail()
                     {
-                        Code = result.done.ToString(),
+                        Code = result.status.ToString(),
                         Message = result.msg,
                         Partner = _partner,
                         TransactionId = transReq.TransactionId,
@@ -79,7 +94,12 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
                         Payload = jsonString,
                         Created = DateTime.Now
                     });
-                    return new Application.Wrappers.Response<List<F5sVoucherCode>>(false, null, result.msg);
+                    var maLoi = await _maLoiRepository.FindByMaLoiUrbox(result.status.ToString());
+                    if (maLoi != null)
+                    {
+                        return new Application.Wrappers.Response<List<F5sVoucherCode>>(false, null, null, new List<string> { maLoi.MoTaF5s }, int.Parse(maLoi.MaF5s));
+                    }
+                    return new Application.Wrappers.Response<List<F5sVoucherCode>>(false, null, null, new List<string> { ErrorDescription.Unknow },500);
                 }
                 transReq.Status = 1;
                 await requestEndpoint.Send(transReq);
@@ -151,10 +171,34 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
 
         public async Task<Application.Wrappers.Response<F5sVoucherDetail>> VoucherDetailAsync(int id)
         {
+            _logger.LogError($"!!@@##$$*****ERROR: {JsonConvert.SerializeObject(id)}");
             var response = await _client.GetAsync($"/4.0/gift/detail?app_id={AppId}&app_secret={AppSecret}&lang=vi&id={id}");
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<UrboxMessageBase>(jsonString);
+                _logger.LogError($"!!@@##$$*****ERROR: {JsonConvert.SerializeObject(result)}");
+                if (result is not null && result.done.Equals(0))
+                {
+                    var resFailEndpoint = await _bus.GetSendEndpoint(RabbitMqEnvConst.FormatUriRabbitMq(3, _env.IsProduction(), _config));
+                    
+                    await resFailEndpoint.Send(new UrboxTransactionResFail()
+                    {
+                        Code = result.status.ToString(),
+                        Message = result.msg,
+                        Partner = _partner,
+                        TransactionId = null,
+                        ProductCode = null,
+                        Payload = jsonString,
+                        Created = DateTime.Now
+                    });
+                    var maLoi = await _maLoiRepository.FindByMaLoiUrbox(result.status.ToString());
+                    if (maLoi != null)
+                    {
+                        return new Application.Wrappers.Response<F5sVoucherDetail>(false, null, null, new List<string> { maLoi.MoTaF5s }, int.Parse(maLoi.MaF5s));
+                    }
+                    return new Application.Wrappers.Response<F5sVoucherDetail>(false, null, null, new List<string> { ErrorDescription.Unknow }, 500);
+                }
                 var p = JsonConvert.DeserializeObject<UrboxVoucherDetailData>(jsonString);
                 return new Application.Wrappers.Response<F5sVoucherDetail>(true, _mapper.Map<F5sVoucherDetail>(p));
             }
@@ -167,6 +211,28 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<UrboxMessageBase>(jsonString);
+                if (result is not null && result.done.Equals(0))
+                {
+                    var resFailEndpoint = await _bus.GetSendEndpoint(RabbitMqEnvConst.FormatUriRabbitMq(3, _env.IsProduction(), _config));
+                    _logger.LogError($"!!@@##$$*****ERROR: {JsonConvert.SerializeObject(result)}");
+                    await resFailEndpoint.Send(new UrboxTransactionResFail()
+                    {
+                        Code = result.status.ToString(),
+                        Message = result.msg,
+                        Partner = _partner,
+                        TransactionId = null,
+                        ProductCode = null,
+                        Payload = jsonString,
+                        Created = DateTime.Now
+                    });
+                    var maLoi = await _maLoiRepository.FindByMaLoiUrbox(result.status.ToString());
+                    if (maLoi != null)
+                    {
+                        return new Application.Wrappers.Response<List<F5sVoucherBase>>(false, null, null, new List<string> { maLoi.MoTaF5s }, int.Parse(maLoi.MaF5s));
+                    }
+                    return new Application.Wrappers.Response<List<F5sVoucherBase>>(false, null, null, new List<string> { ErrorDescription.Unknow }, 500);
+                }
                 var vouchers = JsonConvert.DeserializeObject<UrboxVoucherList>(jsonString);
                 var p = _mapper.Map<List<F5sVoucherBase>>(vouchers.data.items, opt => opt.AfterMap((s, d) =>
                 {
@@ -188,6 +254,28 @@ namespace CoreLoyalty.F5Seconds.Urbox.Repositories
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<UrboxMessageBase>(jsonString);
+                if (result is not null && result.done.Equals(0))
+                {
+                    var resFailEndpoint = await _bus.GetSendEndpoint(RabbitMqEnvConst.FormatUriRabbitMq(3, _env.IsProduction(), _config));
+                    _logger.LogError($"!!@@##$$*****ERROR: {JsonConvert.SerializeObject(result)}");
+                    await resFailEndpoint.Send(new UrboxTransactionResFail()
+                    {
+                        Code = result.status.ToString(),
+                        Message = result.msg,
+                        Partner = _partner,
+                        TransactionId = null,
+                        ProductCode = null,
+                        Payload = jsonString,
+                        Created = DateTime.Now
+                    });
+                    var maLoi = await _maLoiRepository.FindByMaLoiUrbox(result.status.ToString());
+                    if (maLoi != null)
+                    {
+                        return new Application.Wrappers.Response<UrboxTransCheckRes>(false, null, null, new List<string> { maLoi.MoTaF5s }, int.Parse(maLoi.MaF5s));
+                    }
+                    return new Application.Wrappers.Response<UrboxTransCheckRes>(false, null, null, new List<string> { ErrorDescription.Unknow }, 500);
+                }
                 return new Application.Wrappers.Response<UrboxTransCheckRes>(true, JsonConvert.DeserializeObject<UrboxTransCheckRes>(jsonString));
             }
             var errorStr = await response.Content.ReadAsStringAsync();

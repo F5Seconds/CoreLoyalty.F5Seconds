@@ -32,6 +32,7 @@ namespace CoreLoyalty.F5Seconds.Urbox.Controllers.v1
         [HttpGet("detail/{id}")]
         public async Task<IActionResult> GetProductDetail(int id)
         {
+            _logger.LogError($"!!@@##$$*****ERROR: {JsonConvert.SerializeObject(id)}");
             var voucher = await _urboxHttpClientService.VoucherDetailAsync(id);
             return Ok(voucher);
         }

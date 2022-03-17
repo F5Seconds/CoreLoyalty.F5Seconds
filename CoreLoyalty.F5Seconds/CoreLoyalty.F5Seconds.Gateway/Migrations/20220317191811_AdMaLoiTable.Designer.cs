@@ -3,14 +3,16 @@ using System;
 using CoreLoyalty.F5Seconds.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CoreLoyalty.F5Seconds.Gateway.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220317191811_AdMaLoiTable")]
+    partial class AdMaLoiTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -442,14 +444,14 @@ namespace CoreLoyalty.F5Seconds.Gateway.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("MaF5s")
-                        .HasColumnType("longtext");
+                    b.Property<int>("MaF5s")
+                        .HasColumnType("int");
 
-                    b.Property<string>("MaGotIt")
-                        .HasColumnType("longtext");
+                    b.Property<int>("MaGotIt")
+                        .HasColumnType("int");
 
-                    b.Property<string>("MaUrbox")
-                        .HasColumnType("longtext");
+                    b.Property<int>("MaUrbox")
+                        .HasColumnType("int");
 
                     b.Property<string>("MoTaF5s")
                         .HasColumnType("longtext");

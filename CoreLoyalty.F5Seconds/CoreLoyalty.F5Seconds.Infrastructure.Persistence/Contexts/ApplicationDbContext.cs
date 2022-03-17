@@ -45,6 +45,8 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Contexts
         public DbSet<LinhVuc> LinhVucs { get; set; }
         public DbSet<ThuongHieu> ThuongHieus { get; set; }
         #endregion
+        public DbSet<MaLoi> MaLois { get; set; }
+
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             foreach (var entry in ChangeTracker.Entries<AuditableBaseEntity>())

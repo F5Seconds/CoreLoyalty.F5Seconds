@@ -2,6 +2,8 @@
 using CoreLoyalty.F5Seconds.Application.Common;
 using CoreLoyalty.F5Seconds.Application.DTOs.F5seconds;
 using CoreLoyalty.F5Seconds.Application.DTOs.GotIt;
+using CoreLoyalty.F5Seconds.Application.Interfaces.Repositories;
+using CoreLoyalty.F5Seconds.Domain.Const;
 using CoreLoyalty.F5Seconds.Domain.Entities;
 using CoreLoyalty.F5Seconds.GotIt.Interfaces;
 using CoreLoyalty.F5Seconds.Infrastructure.Shared.Const;
@@ -30,13 +32,15 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
         private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
         private string Partner = "GOTIT";
+        private readonly IMaLoiRepositoryAsync _maLoiRepository;
         public GotItHttpClientRepository(
             HttpClient client, 
             IMapper mapper, 
             ILogger<GotItHttpClientRepository> logger, 
             IBus bus, 
             IConfiguration config, 
-            IWebHostEnvironment env)
+            IWebHostEnvironment env,
+            IMaLoiRepositoryAsync maLoiRepository)
         {
             _client = client;
             _mapper = mapper;
@@ -44,6 +48,7 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
             _bus = bus;
             _config = config;
             _env = env;
+            _maLoiRepository = maLoiRepository;
         }
         public async Task<Application.Wrappers.Response<List<F5sVoucherCode>>> BuyVoucherAsync(GotItBuyVoucherReq voucher)
         {
@@ -63,6 +68,7 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
                 var jsonString = await response.Content.ReadAsStringAsync();
                 if (Helpers.TryParseJsonConvert(jsonString, out GotItErrorMessage error))
                 {
+                    _logger.LogError($"!!@@##$$*****ERROR: {JsonConvert.SerializeObject(error)}");
                     transReq.Status = 0;
                     await requestEndpoint.Send(transReq);
                     await resFailEndpoint.Send(new GotItTransactionResFail()
@@ -75,7 +81,12 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
                         Payload = jsonString,
                         Created = DateTime.Now
                     });
-                    return new Application.Wrappers.Response<List<F5sVoucherCode>>(false, null, error.code, new List<string> { error.msg });
+                    var maLoi = await _maLoiRepository.FindByMaLoiGotIt(error.code);
+                    if(maLoi != null)
+                    {
+                        return new Application.Wrappers.Response<List<F5sVoucherCode>>(false, null, null, new List<string> { maLoi.MoTaF5s },int.Parse(maLoi.MaF5s));
+                    }
+                    return new Application.Wrappers.Response<List<F5sVoucherCode>>(false, null, null, new List<string> { ErrorDescription.Unknow },500);
                 }
                 var resultV = JsonConvert.DeserializeObject<List<GotItBuyVoucherRes>>(jsonString);
                 List<VoucherInfoRes> vRes = new List<VoucherInfoRes>();
@@ -147,12 +158,29 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
         {
             var content = new StringContent(JsonConvert.SerializeObject(new PayloadGotItVoucherDetail() { productId = id }), Encoding.UTF8, "application/json");
             var response = await _client.PostAsync("/api/product/detail", content);
+            var resFailEndpoint = await _bus.GetSendEndpoint(RabbitMqEnvConst.FormatUriRabbitMq(3, _env.IsProduction(), _config));
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
                 if (Helpers.TryParseJsonConvert(jsonString, out GotItErrorMessage error))
                 {
-                    return new Application.Wrappers.Response<F5sVoucherDetail>(false, null, error.code, new List<string> { error.msg });
+                    _logger.LogError($"!!@@##$$*****ERROR: {JsonConvert.SerializeObject(error)}");
+                    await resFailEndpoint.Send(new GotItTransactionResFail()
+                    {
+                        Code = error.code,
+                        Message = error.msg,
+                        Partner = Partner,
+                        TransactionId = null,
+                        ProductCode = null,
+                        Payload = jsonString,
+                        Created = DateTime.Now
+                    });
+                    var maLoi = await _maLoiRepository.FindByMaLoiGotIt(error.code);
+                    if (maLoi != null)
+                    {
+                        return new Application.Wrappers.Response<F5sVoucherDetail>(false, null, null, new List<string> { maLoi.MoTaF5s }, int.Parse(maLoi.MaF5s));
+                    }
+                    return new Application.Wrappers.Response<F5sVoucherDetail>(false, null, null, new List<string> { ErrorDescription.Unknow },500);
                 }
                 var product = JsonConvert.DeserializeObject<GotItVoucherDetail>(jsonString);
                 return new Application.Wrappers.Response<F5sVoucherDetail>(true, _mapper.Map<F5sVoucherDetail>(product));
@@ -164,12 +192,29 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
         {
             var content = new StringContent(JsonConvert.SerializeObject(new PayloadGotItVoucherList()), Encoding.UTF8, "application/json");
             var response = await _client.PostAsync("/api/product/list", content);
+            var resFailEndpoint = await _bus.GetSendEndpoint(RabbitMqEnvConst.FormatUriRabbitMq(3, _env.IsProduction(), _config));
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
                 if (Helpers.TryParseJsonConvert(jsonString, out GotItErrorMessage error))
                 {
-                    return new Application.Wrappers.Response<List<F5sVoucherBase>>(false, null, error.code, new List<string> { error.msg });
+                    _logger.LogError($"!!@@##$$*****ERROR: {JsonConvert.SerializeObject(error)}");
+                    await resFailEndpoint.Send(new GotItTransactionResFail()
+                    {
+                        Code = error.code,
+                        Message = error.msg,
+                        Partner = Partner,
+                        TransactionId = null,
+                        ProductCode = null,
+                        Payload = jsonString,
+                        Created = DateTime.Now
+                    });
+                    var maLoi = await _maLoiRepository.FindByMaLoiGotIt(error.code);
+                    if (maLoi != null)
+                    {
+                        return new Application.Wrappers.Response<List<F5sVoucherBase>>(false, null, null, new List<string> { maLoi.MoTaF5s }, int.Parse(maLoi.MaF5s));
+                    }
+                    return new Application.Wrappers.Response<List<F5sVoucherBase>>(false, null, null, new List<string> { ErrorDescription.Unknow },500);
                 }
                 var listV = new List<F5sVoucherBase>();
                 var res = JsonConvert.DeserializeObject<GotItVoucherList>(jsonString);
@@ -208,9 +253,30 @@ namespace CoreLoyalty.F5Seconds.GotIt.Repositories
         {
             var content = new StringContent(JsonConvert.SerializeObject(payload, Formatting.Indented), Encoding.UTF8, "application/json");
             var response = await _client.PostAsync("/api/transaction/check", content);
+            var resFailEndpoint = await _bus.GetSendEndpoint(RabbitMqEnvConst.FormatUriRabbitMq(3, _env.IsProduction(), _config));
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
+                if (Helpers.TryParseJsonConvert(jsonString, out GotItErrorMessage error))
+                {
+                    _logger.LogError($"!!@@##$$*****ERROR: {JsonConvert.SerializeObject(error)}");
+                    await resFailEndpoint.Send(new GotItTransactionResFail()
+                    {
+                        Code = error.code,
+                        Message = error.msg,
+                        Partner = Partner,
+                        TransactionId = payload.voucherRefId,
+                        ProductCode = null,
+                        Payload = jsonString,
+                        Created = DateTime.Now
+                    });
+                    var maLoi = await _maLoiRepository.FindByMaLoiGotIt(error.code);
+                    if (maLoi != null)
+                    {
+                        return new Application.Wrappers.Response<GotItTransCheckRes>(false, null, null, new List<string> { maLoi.MoTaF5s }, int.Parse(maLoi.MaF5s));
+                    }
+                    return new Application.Wrappers.Response<GotItTransCheckRes>(false, null, null, new List<string> { ErrorDescription.Unknow }, 500);
+                }
                 return new Application.Wrappers.Response<GotItTransCheckRes>(true, JsonConvert.DeserializeObject<GotItTransCheckRes>(jsonString));
             }
             var errorStr = await response.Content.ReadAsStringAsync();
