@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CoreLoyalty.F5Seconds.Domain.Common
 {

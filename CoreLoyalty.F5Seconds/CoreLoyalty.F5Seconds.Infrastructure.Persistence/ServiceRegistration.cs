@@ -1,4 +1,5 @@
 ﻿using CoreLoyalty.F5Seconds.Application.Interfaces;
+using CoreLoyalty.F5Seconds.Application.Interfaces.CoreLoyalty.DiaChis;
 using CoreLoyalty.F5Seconds.Application.Interfaces.GotIt.Repositories;
 using CoreLoyalty.F5Seconds.Application.Interfaces.Repositories;
 using CoreLoyalty.F5Seconds.Application.Interfaces.Urbox.Repositories;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using System;
+using VietCapital.Partner.F5Seconds.Infrastructure.Persistence.Repositories.CoreLoyalty.DiaChis;
 
 namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence
 {
@@ -44,6 +46,9 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence
             services.AddTransient<IUrboxTransReqRepositoryAsync, UrboxTransReqRepositoryAsync>();
             services.AddTransient<IUrboxTransResSuccessRepositoryAsync, UrboxTransResSuccessRepositoryAsync>();
             services.AddTransient<IUrboxTransResFailRepositoryAsync, UrboxTransResFailRepositoryAsync>();
+
+            services.AddTransient<IThanhPhoRepositoryAsync, ThanhPhoRepositoryAsync>();
+
             #endregion
         }
     }

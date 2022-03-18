@@ -17,6 +17,12 @@ namespace CoreLoyalty.F5Seconds.Application.Wrappers
             Errors = error;
             Code = code;
         }
+        public Response(T data, string message = null)
+        {
+            Succeeded = true;
+            Message = message;
+            Data = data;
+        }
         public Response(string message)
         {
             Succeeded = false;
