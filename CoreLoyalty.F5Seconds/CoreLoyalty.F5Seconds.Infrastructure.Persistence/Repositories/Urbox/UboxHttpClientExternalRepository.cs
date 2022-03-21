@@ -4,7 +4,9 @@ using CoreLoyalty.F5Seconds.Application.Interfaces.Urbox;
 using CoreLoyalty.F5Seconds.Application.Parameters;
 using CoreLoyalty.F5Seconds.Application.Wrappers;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +28,12 @@ namespace CoreLoyalty.F5Seconds.Infrastructure.Persistence.Repositories.Urbox
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<Response<List<F5sVoucherCode>>>(jsonString);
+                var urboxVouchers = JsonConvert.DeserializeObject<Response<List<F5sVoucherCode>>>(jsonString);
+                foreach (var item in urboxVouchers.Data)
+                {
+                    item.expiryDate = DateTime.ParseExact(item.expiryDate, "dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("yyyy-MM-dd");
+                }
+                return urboxVouchers;
             }
             return new Response<List<F5sVoucherCode>>(false, null, "Server Error FROM UboxHttpClientExternalRepository");
         }
